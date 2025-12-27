@@ -29,11 +29,11 @@ jobs:
         uses: cachix/install-nix-action@v31
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-      - name: Build static site
+      - name: Build site
         run: nix-shell --run 'just build'
-      - name: Upload artifact
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
-          name: artifacts
+          name: build-artifacts
           path: ${{ github.workspace }}/_site

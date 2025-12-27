@@ -1,7 +1,7 @@
 name: GitHub Pages
 on:
   push:
-    branches: [$default-branch]
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: write
@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
-          name: artifacts
+          name: build-artifacts
           path: ${{ github.workspace }}/_site
   deploy:
     name: Deploy
@@ -53,10 +53,12 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Download build artifacts
         uses: actions/download-artifact@v7
+        with:
+          name: build-artifacts
       - name: Upload build artifacts to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_site
+          path: ./
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
