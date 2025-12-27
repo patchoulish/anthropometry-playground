@@ -1,0 +1,27 @@
+{
+	"name": "anthropometry-playground",
+	"version": "0.0.1",
+	"description": "An anthropometry playground in the browser",
+	"private": true,
+	"scripts": {
+		"serve": "nix-shell --run 'just serve'",
+		"build": "nix-shell --run 'just build'"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/patchoulish/anthropometry-playground.git"
+	},
+	"keywords": [],
+	"author": "patchoulish",
+	"license": "MIT",
+	"type": "module",
+	"bugs": {
+		"url": "https://github.com/patchoulish/anthropometry-playground/issues"
+	},
+	"homepage": "https://github.com/patchoulish/anthropometry-playground#readme",
+	"dependencies": {
+		"@11ty/eleventy": "^3.1.2",
+		"@picocss/pico": "^2.1.1",
+		"sass": "^1.97.1"
+	}
+}
