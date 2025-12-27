@@ -1,0 +1,8 @@
+# macOS folder metadata
+.DS_Store
+
+# Node.js dependencies
+node_modules/**
+
+# Build output
+_site/**

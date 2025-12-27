@@ -1,0 +1,4 @@
+* text eol=lf
+
+# Raw data files.
+*.csv -diff
