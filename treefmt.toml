@@ -1,0 +1,25 @@
+[formatter.nix]
+command = "nixfmt"
+includes = ["*.nix"]
+excludes = ["_site/**"] # Exclude build output.
+
+[formatter.prettier]
+command = "prettier"
+includes = [
+  "*.css",
+  "*.html",
+  "*.js",
+  "*.json",
+  "*.md",
+  "*.scss",
+  "*.yaml",
+  "*.yml"
+]
+excludes = ["_site/**"] # Exclude build output.
+options = ["--write"]
+
+[formatter.toml]
+command = "toml-sort"
+includes = ["*.toml"]
+excludes = ["_site/**"] # Exclude build output.
+options = ["-i"]
