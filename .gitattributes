@@ -1,4 +1,7 @@
 * text eol=lf
 
+# npm lock file.
+package-lock.json -diff
+
 # Raw data files.
 *.csv -diff
