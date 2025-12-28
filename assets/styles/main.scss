@@ -1,1 +1,30 @@
 @use "@picocss/pico/scss/pico";
+
+* {
+	font-family: "SF Mono", ui-monospace, monospace;
+}
+
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+footer {
+	margin-top: auto;
+	text-align: center;
+}
+
+nav {
+	flex-direction: row;
+}
+
+.icon {
+	fill: currentColor;
+}
+
+@media (max-width: 256px) {
+	nav {
+		flex-direction: column;
+	}
+}
