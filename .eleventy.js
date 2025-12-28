@@ -53,4 +53,9 @@ export default async function (eleventyConfig) {
 		"node_modules/choices.js/public/assets/styles/choices.min.css":
 			"assets/styles/vendor/choices.min.css",
 	});
+
+	eleventyConfig.setChokidarConfig({
+		usePolling: true,
+		interval: 1000,
+	});
 }
