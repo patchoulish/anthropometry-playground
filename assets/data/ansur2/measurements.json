@@ -1,0 +1,566 @@
+{
+	"abdominalextensiondepthsitting": {
+		"name": "Abdominal Extension Depth, Sitting",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"acromialheight": {
+		"name": "Acromial Height",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"acromionradialelength": {
+		"name": "Acromion-Radiale Length",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"age": {
+		"name": "Age",
+		"category": "general",
+		"unit": "time",
+		"conversionFactor": 31556952
+	},
+	"anklecircumference": {
+		"name": "Ankle Circumference",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"axillaheight": {
+		"name": "Axilla Height",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"balloffootcircumference": {
+		"name": "Ball of Foot Circumference",
+		"category": "foot",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"balloffootlength": {
+		"name": "Ball of Foot Length",
+		"category": "foot",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"biacromialbreadth": {
+		"name": "Biacromial Breadth",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"bicepscircumferenceflexed": {
+		"name": "Biceps Circumference, Flexed",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"bicristalbreadth": {
+		"name": "Bicristal Breadth",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"bideltoidbreadth": {
+		"name": "Bideltoid Breadth",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"bimalleolarbreadth": {
+		"name": "Bimalleolar Breadth",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"bitragionchinarc": {
+		"name": "Bitragion Chin Arc",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"bitragionsubmandibulararc": {
+		"name": "Bitragion Submandibular Arc",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"bizygomaticbreadth": {
+		"name": "Bizygomatic Breadth",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"buttockcircumference": {
+		"name": "Buttock Circumference",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"buttockdepth": {
+		"name": "Buttock Depth",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"buttockheight": {
+		"name": "Buttock Height",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"buttockkneelength": {
+		"name": "Buttock-Knee Length",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"buttockpopliteallength": {
+		"name": "Buttock-Popliteal Length",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"calfcircumference": {
+		"name": "Calf Circumference",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"cervicaleheight": {
+		"name": "Cervicale Height",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"chestbreadth": {
+		"name": "Chest Breadth",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"chestcircumference": {
+		"name": "Chest Circumference",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"chestdepth": {
+		"name": "Chest Depth",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"chestheight": {
+		"name": "Chest Height",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"crotchheight": {
+		"name": "Crotch Height",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"crotchlengthomphalion": {
+		"name": "Crotch Length (Omphalion)",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"crotchlengthposterioromphalion": {
+		"name": "Crotch Length, Posterior (Omphalion)",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"earbreadth": {
+		"name": "Ear Breadth",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"earlength": {
+		"name": "Ear Length",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"earprotrusion": {
+		"name": "Ear Protrusion",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"elbowrestheight": {
+		"name": "Elbow Rest Height",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"eyeheightsitting": {
+		"name": "Eye Height, Sitting",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"footbreadthhorizontal": {
+		"name": "Foot Breadth, Horizontal",
+		"category": "foot",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"footlength": {
+		"name": "Foot Length",
+		"category": "foot",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"forearmcenterofgriplength": {
+		"name": "Forearm-Center of Grip Length",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"forearmcircumferenceflexed": {
+		"name": "Forearm Circumference, Flexed",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"forearmforearmbreadth": {
+		"name": "Forearm-Forearm Breadth",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"forearmhandlength": {
+		"name": "Forearm-Hand Length",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"functionalleglength": {
+		"name": "Functional Leg Length",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"handbreadth": {
+		"name": "Hand Breadth",
+		"category": "hand",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"handcircumference": {
+		"name": "Hand Circumference",
+		"category": "hand",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"handlength": {
+		"name": "Hand Length",
+		"category": "hand",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"headbreadth": {
+		"name": "Head Breadth",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"headcircumference": {
+		"name": "Head Circumference",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"headlength": {
+		"name": "Head Length",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"heelanklecircumference": {
+		"name": "Heel-Ankle Circumference",
+		"category": "foot",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"heelbreadth": {
+		"name": "Heel Breadth",
+		"category": "foot",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"hipbreadth": {
+		"name": "Hip Breadth",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"hipbreadthsitting": {
+		"name": "Hip Breadth, Sitting",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"iliocristaleheight": {
+		"name": "Iliocristale Height",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"interpupillarybreadth": {
+		"name": "Interpupillary Breadth",
+		"category": "face",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"interscyei": {
+		"name": "Interscye I",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"interscyeii": {
+		"name": "Interscye II",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"kneeheightmidpatella": {
+		"name": "Knee Height, Midpatella",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"kneeheightsitting": {
+		"name": "Knee Height, Sitting",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"lateralfemoralepicondyleheight": {
+		"name": "Lateral Femoral Epicondyle Height",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"lateralmalleolusheight": {
+		"name": "Lateral Malleolus Height",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"lowerthighcircumference": {
+		"name": "Lower Thigh Circumference",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"mentonsellionlength": {
+		"name": "Menton-Stellion Length",
+		"category": "face",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"neckcircumference": {
+		"name": "Neck Circumference",
+		"category": "neck",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"neckcircumferencebase": {
+		"name": "Neck Circumference, Base",
+		"category": "neck",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"overheadfingertipreachsitting": {
+		"name": "Overhead Fingertip Reach, Sitting",
+		"category": "hand",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"palmlength": {
+		"name": "Palm Length",
+		"category": "hand",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"poplitealheight": {
+		"name": "Popliteal Height",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"radialestylionlength": {
+		"name": "Radiale-Stylion Length",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"shouldercircumference": {
+		"name": "Shoulder Circumference",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"shoulderelbowlength": {
+		"name": "Shoulder-Elbow Length",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"shoulderlength": {
+		"name": "Shoulder Length",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"sittingheight": {
+		"name": "Sitting Height",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"sleevelengthspinewrist": {
+		"name": "Sleeve Length: Spine-Wrist",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"sleeveoutseam": {
+		"name": "Sleeve Outseam",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"span": {
+		"name": "Span",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"stature": {
+		"name": "Stature",
+		"category": "general",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"suprasternaleheight": {
+		"name": "Suprasternale Height",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"tenthribheight": {
+		"name": "Tenth Rib Height",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"thighcircumference": {
+		"name": "Thigh Circumference",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"thighclearance": {
+		"name": "Thigh Clearance",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"thumbtipreach": {
+		"name": "Thumbtip Reach",
+		"category": "hand",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"tibialheight": {
+		"name": "Tibial Height",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"tragiontopofhead": {
+		"name": "Tragion-Top of Head",
+		"category": "head",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"trochanterionheight": {
+		"name": "Trochanterion Height",
+		"category": "leg",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"verticaltrunkcircumferenceusa": {
+		"name": "Vertical Trunk Circumference (USA)",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"waistbacklength": {
+		"name": "Waist Back Length (Omphalion)",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"waistbreadth": {
+		"name": "Waist Breadth",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"waistcircumference": {
+		"name": "Waist Circumference (Omphalion)",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"waistdepth": {
+		"name": "Waist Depth",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"waistfrontlengthsitting": {
+		"name": "Waist Front Length, Sitting",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"waistheightomphalion": {
+		"name": "Waist Height (Omphalion)",
+		"category": "torso",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"weightkg": {
+		"name": "Weight",
+		"category": "general",
+		"unit": "mass",
+		"conversionFactor": 0.1
+	},
+	"wristcircumference": {
+		"name": "Wrist Circumference",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	},
+	"wristheight": {
+		"name": "Wrist Height",
+		"category": "arm",
+		"unit": "length",
+		"conversionFactor": 1000
+	}
+}

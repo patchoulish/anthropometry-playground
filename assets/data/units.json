@@ -1,0 +1,32 @@
+{
+	"length": {
+		"metric": {
+			"abbreviation": "cm",
+			"conversionFactor": 0.01
+		},
+		"imperial": {
+			"abbreviation": "ft",
+			"conversionFactor": 3.28084
+		}
+	},
+	"mass": {
+		"metric": {
+			"abbreviation": "kg",
+			"conversionFactor": 1
+		},
+		"imperial": {
+			"abbreviation": "lbs",
+			"conversionFactor": 2.20462
+		}
+	},
+	"time": {
+		"metric": {
+			"abbreviation": "years",
+			"conversionFactor": 0.0000316887
+		},
+		"imperial": {
+			"abbreviation": "years",
+			"conversionFactor": 0.0000316887
+		}
+	}
+}
