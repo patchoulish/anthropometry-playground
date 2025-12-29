@@ -5,8 +5,8 @@
 			"conversionFactor": 100
 		},
 		"imperial": {
-			"abbreviation": "ft",
-			"conversionFactor": 3.28084
+			"abbreviation": "in",
+			"conversionFactor": 39.3701
 		}
 	},
 	"mass": {
