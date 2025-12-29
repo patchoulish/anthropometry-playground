@@ -32,6 +32,9 @@ pkgs.mkShell {
       pre-commit install
       echo "Git hooks installed."
     fi
+    echo "Updating Node dependencies..."
+    npm install
+    echo "Node dependencies updated."
     echo ""
     echo "Welcome to the anthropometry-playground development shell."
     echo "Run 'just' to see available recipes."

@@ -6,13 +6,11 @@ default:
 # Serve the repository locally.
 [group('dev')]
 serve:
-	npm install
 	npx '@11ty/eleventy' --serve
 
 # Build the repository.
 [group('dev')]
 build:
-	npm install
 	npx '@11ty/eleventy'
 
 # Clean the repository of build artifacts.
