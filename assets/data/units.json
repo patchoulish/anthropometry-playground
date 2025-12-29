@@ -2,7 +2,7 @@
 	"length": {
 		"metric": {
 			"abbreviation": "cm",
-			"conversionFactor": 0.01
+			"conversionFactor": 100
 		},
 		"imperial": {
 			"abbreviation": "ft",

@@ -549,7 +549,7 @@
 		"name": "Weight",
 		"category": "general",
 		"unit": "mass",
-		"conversionFactor": 0.1
+		"conversionFactor": 10
 	},
 	"wristcircumference": {
 		"name": "Wrist Circumference",
