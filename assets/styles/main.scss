@@ -28,6 +28,7 @@ nav {
 
 details .dropdown > ul {
 	max-height: 512px;
+	overflow-y: auto;
 }
 
 .visualization-grid {
