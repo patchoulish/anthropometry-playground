@@ -16,6 +16,12 @@
 
 const themeStorageKey = "theme-preference";
 
+const notifyThemeChange = (theme) => {
+	window.dispatchEvent(
+		new CustomEvent("themechange", { detail: { theme: theme } }),
+	);
+};
+
 const onThemeToggleClick = () => {
 	// Toggle between light and dark themes.
 	theme.value = theme.value === "light" ? "dark" : "light";
@@ -39,6 +45,7 @@ const setThemePreference = () => {
 	localStorage.setItem(themeStorageKey, theme.value);
 
 	refreshTheme();
+	notifyThemeChange(theme.value);
 };
 
 const refreshTheme = () => {
