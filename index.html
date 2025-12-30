@@ -124,10 +124,208 @@
 		</header>
 
 		<main class="container">
-			<i
-				>This site is currently under construction, please check back
-				later.</i
-			>
+			<article>
+				<div class="grid">
+					<details
+						class="nomargin dropdown"
+						data-tooltip="Choose the dataset to analyze."
+						data-preference-dropdown
+					>
+						<summary>Dataset</summary>
+						<ul>
+							<li>
+								<label class="secondary">
+									<input
+										type="radio"
+										name="dataset"
+										value="ansur1"
+										disabled
+									/>
+									<span class="secondary">
+										ANSUR I
+										<br />
+										<small>
+											A survey of U.S. Army personnel
+											published in 1988.<br />
+											Includes 140+ measures for 1774 men
+											and 2208 women.
+										</small>
+									</span>
+								</label>
+							</li>
+							<hr />
+							<li>
+								<label>
+									<input
+										type="radio"
+										name="dataset"
+										value="ansur2"
+										checked
+									/>
+									<span>
+										ANSUR II
+										<small class="badge"
+											>(recommended)</small
+										>
+										<br />
+										<small>
+											A survey of U.S. Army personnel
+											published in 2017.<br />
+											Includes 93 measures for 4082 men
+											and 1986 women.<br />
+										</small>
+									</span>
+								</label>
+							</li>
+						</ul>
+					</details>
+					<details
+						class="nomargin dropdown"
+						data-tooltip="Choose the gender(s) to include."
+						data-preference-dropdown
+					>
+						<summary>Genders</summary>
+						<ul>
+							<li>
+								<label>
+									<input
+										type="checkbox"
+										name="genderMale"
+										checked
+									/>
+									Male
+								</label>
+							</li>
+							<li>
+								<label>
+									<input
+										type="checkbox"
+										name="genderFemale"
+										checked
+									/>
+									Female
+								</label>
+							</li>
+						</ul>
+					</details>
+					<details
+						class="nomargin dropdown"
+						data-tooltip="Choose the units of measurement to use."
+						data-preference-dropdown
+					>
+						<summary>Units</summary>
+						<ul>
+							<li>
+								<label>
+									<input
+										type="radio"
+										name="unit"
+										value="metric"
+										checked
+									/>
+									<span>Metric <small>(cm, kg)</small></span>
+								</label>
+							</li>
+							<li>
+								<label>
+									<input
+										type="radio"
+										name="unit"
+										value="imperial"
+									/>
+									<span
+										>Imperial <small>(in, lbs)</small></span
+									>
+								</label>
+							</li>
+						</ul>
+					</details>
+				</div>
+
+				<hr />
+
+				<details name="visualizations" open>
+					<summary class="contrast">Bivariate Scatter Plot</summary>
+					<div class="grid visualization-grid">
+						<div>
+							<p>
+								View the relationship between two different
+								anthropometric measurements. Select the
+								measurements for the X and Y axes. Enter a value
+								for each to see where that point falls within
+								the dataset.
+							</p>
+							<div>
+								<label>X-Axis:</label>
+								<details
+									class="dropdown"
+									name="measurementX"
+									data-measurement-dropdown
+									data-measurement-dropdown-default="weightkg"
+								>
+									<summary>Measurement</summary>
+									<ul>
+										<li>
+											<input
+												type="search"
+												placeholder="Search"
+												aria-label="Search"
+											/>
+										</li>
+									</ul>
+								</details>
+
+								<fieldset role="group">
+									<input
+										type="number"
+										name="measurementValueX"
+										data-measurement-value
+									/>
+									<button
+										class="contrast"
+										data-unit-for="measurementX"
+										disabled
+									></button>
+								</fieldset>
+							</div>
+							<div>
+								<label>Y-Axis:</label>
+								<details
+									class="dropdown"
+									name="measurementY"
+									data-measurement-dropdown
+									data-measurement-dropdown-default="stature"
+								>
+									<summary>Measurement</summary>
+									<ul>
+										<li>
+											<input
+												type="search"
+												placeholder="Search"
+												aria-label="Search"
+											/>
+										</li>
+									</ul>
+								</details>
+
+								<fieldset role="group">
+									<input
+										type="number"
+										name="measurementValueY"
+										data-measurement-value
+									/>
+									<button
+										class="contrast"
+										data-unit-for="measurementY"
+										disabled
+									></button>
+								</fieldset>
+							</div>
+						</div>
+						<canvas id="scatter-plot" class="chart"> </canvas>
+					</div>
+				</details>
+			</article>
 		</main>
 
 		<footer>
@@ -140,7 +338,8 @@
 			</small>
 		</footer>
 
+		<script src="assets/scripts/vendor/d3.min.js"></script>
 		<script src="assets/scripts//theme-toggle.js"></script>
-		<script src="assets/scripts/main.js"></script>
+		<script type="module" src="assets/scripts/main.js"></script>
 	</body>
 </html>
