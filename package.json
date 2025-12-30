@@ -22,7 +22,6 @@
 	"dependencies": {
 		"@11ty/eleventy": "^3.1.2",
 		"@picocss/pico": "^2.1.1",
-		"choices.js": "^11.1.0",
 		"convert-csv-to-json": "^3.20.0",
 		"sass": "^1.97.1"
 	}
