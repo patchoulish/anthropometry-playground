@@ -17,12 +17,6 @@
 		"unit": "length",
 		"conversionFactor": 1000
 	},
-	"age": {
-		"name": "Age",
-		"category": "general",
-		"unit": "time",
-		"conversionFactor": 31556952
-	},
 	"anklecircumference": {
 		"name": "Ankle Circumference",
 		"category": "leg",
