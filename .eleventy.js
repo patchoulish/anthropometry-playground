@@ -1,9 +1,13 @@
 import path from "node:path";
 import * as sass from "sass";
+import handlebarsPlugin from "@11ty/eleventy-plugin-handlebars";
 import csvToJson from "convert-csv-to-json";
 
 export default async function (eleventyConfig) {
 	// Output directory: _site
+
+	// Add Handlebars support.
+	eleventyConfig.addPlugin(handlebarsPlugin);
 
 	// Add sass support.
 	eleventyConfig.addExtension("scss", {

@@ -21,6 +21,7 @@
 	"homepage": "https://github.com/patchoulish/anthropometry-playground#readme",
 	"dependencies": {
 		"@11ty/eleventy": "^3.1.2",
+		"@11ty/eleventy-plugin-handlebars": "^1.0.0",
 		"@picocss/pico": "^2.1.1",
 		"convert-csv-to-json": "^3.20.0",
 		"sass": "^1.97.1"
