@@ -4,14 +4,15 @@ class Plot {
 	constructor() {}
 
 	render(canvas) {
+		const dpr = window.devicePixelRatio || 1;
 		const ctx = canvas.getContext("2d");
 
 		// Clear the canvas.
 		ctx.save();
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
 		ctx.restore();
 
-		this.handleRender(ctx, canvas.width, canvas.height);
+		this.handleRender(ctx, canvas.width / dpr, canvas.height / dpr);
 	}
 
 	handleRender(ctx, width, height) {

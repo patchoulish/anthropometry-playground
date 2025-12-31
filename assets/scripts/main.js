@@ -301,21 +301,17 @@ const getUnitAbbreviationForMeasurement = (measurementId) => {
 };
 
 const resizeCanvasToContainer = (canvas) => {
-	const rect = canvas.getBoundingClientRect();
-	const dpr = 1;
+	const canvasSize = canvas.getBoundingClientRect();
+	const dpr = window.devicePixelRatio || 1;
 
-	const width = Math.round(rect.width * dpr);
-	const height = Math.round(rect.height * dpr);
+	canvas.width = Math.floor(canvasSize.width * dpr);
+	canvas.height = Math.floor(canvasSize.height * dpr);
 
-	if (canvas.width !== width || canvas.height !== height) {
-		canvas.width = width;
-		canvas.height = height;
+	canvas.style.width = `${canvasSize.width}px`;
+	canvas.style.height = `${canvasSize.height}px`;
 
-		const ctx = canvas.getContext("2d");
-		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-	}
-
-	return { width: rect.width, height: rect.height, dpr };
+	const ctx = canvas.getContext("2d");
+	ctx.scale(dpr, dpr);
 };
 
 const convertValuesForDisplay = (values, measurementId) => {
