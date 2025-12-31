@@ -93,13 +93,6 @@ export default async function (eleventyConfig) {
 			"assets/data/ansur2/measurements.json",
 	});
 
-	eleventyConfig.addPassthroughCopy({
-		"node_modules/choices.js/public/assets/scripts/choices.min.js":
-			"assets/scripts/vendor/choices.min.js",
-		"node_modules/choices.js/public/assets/styles/choices.min.css":
-			"assets/styles/vendor/choices.min.css",
-	});
-
 	eleventyConfig.setChokidarConfig({
 		usePolling: true,
 		interval: 1000,
