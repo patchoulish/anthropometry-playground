@@ -302,7 +302,7 @@ const getUnitAbbreviationForMeasurement = (measurementId) => {
 
 const resizeCanvasToContainer = (canvas) => {
 	const rect = canvas.getBoundingClientRect();
-	const dpr = window.devicePixelRatio || 1;
+	const dpr = 1;
 
 	const width = Math.round(rect.width * dpr);
 	const height = Math.round(rect.height * dpr);
