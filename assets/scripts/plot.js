@@ -19,6 +19,207 @@ class Plot {
 	}
 }
 
+class HistogramPlot extends Plot {
+	constructor(
+		series,
+		seriesColors,
+		seriesLabels,
+		lineThickness = 3,
+		lineOfInterest = { x: undefined },
+		padding = { top: 20, right: 20, bottom: 20, left: 20 },
+		xLabel = "",
+		darkMode = false,
+	) {
+		super();
+
+		this.series = series;
+		this.seriesColors = seriesColors;
+		this.seriesLabels = seriesLabels;
+		this.lineThickness = lineThickness;
+		this.lineOfInterest = lineOfInterest;
+		this.padding = padding;
+		this.xLabel = xLabel;
+		this.darkMode = darkMode;
+	}
+
+	handleRender(ctx, width, height) {
+		const bounds = this.calculateBounds();
+
+		this.drawAxes(ctx, width, height, bounds);
+		// this.drawBars(ctx, width, height, bounds);
+		this.drawDensityCurves(ctx, width, height, bounds);
+		this.drawLineOfInterest(ctx, width, height, bounds);
+	}
+
+	calculateBounds() {
+		const xs = this.series.flatMap((s) => s.valuesOf("x"));
+
+		return {
+			minX: Math.min(...xs),
+			maxX: Math.max(...xs),
+		};
+	}
+
+	drawAxes(ctx, width, height, bounds) {
+		ctx.save();
+
+		ctx.strokeStyle = this.darkMode ? "#FFFFFF" : "#000000";
+		ctx.fillStyle = this.darkMode ? "#FFFFFF" : "#000000";
+		ctx.lineWidth = 1;
+		ctx.font = "12px monospace";
+
+		const left = this.padding.left;
+		const right = width - this.padding.right;
+		const top = this.padding.top;
+		const bottom = height - this.padding.bottom;
+
+		// Draw axis lines.
+
+		// X axis.
+		ctx.beginPath();
+		ctx.moveTo(left, bottom);
+		ctx.lineTo(right, bottom);
+		ctx.stroke();
+
+		this.drawAxesXTicks(ctx, left, right, bottom, bounds);
+
+		this.drawAxesLabels(ctx, width, height);
+
+		ctx.restore();
+	}
+
+	drawAxesXTicks(ctx, left, right, bottom, bounds, tickCount = 5) {
+		for (let i = 0; i <= tickCount; i++) {
+			const t = i / tickCount;
+			const x = left + t * (right - left);
+			const value = bounds.minX + t * (bounds.maxX - bounds.minX);
+
+			// Draw tick line.
+			ctx.beginPath();
+			ctx.moveTo(x, bottom);
+			ctx.lineTo(x, bottom + 5);
+			ctx.stroke();
+
+			ctx.textAlign = "center";
+			ctx.textBaseline = "top";
+			ctx.fillText(value.toFixed(1), x, bottom + 7);
+		}
+	}
+
+	drawAxesLabels(ctx, width, height) {
+		ctx.save();
+
+		ctx.font = "12px monospace";
+
+		// X axis label.
+		ctx.textAlign = "center";
+		ctx.textBaseline = "top";
+		ctx.fillText(this.xLabel, width / 2, height - this.padding.bottom + 25);
+
+		ctx.restore();
+	}
+
+	gaussianKernel(u) {
+		return Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
+	}
+
+	estimateDensity(xs, x, bandwidth) {
+		let sum = 0;
+		for (const xi of xs) {
+			sum += this.gaussianKernel((x - xi) / bandwidth);
+		}
+		return sum / (xs.length * bandwidth);
+	}
+
+	drawDensityCurves(ctx, width, height, bounds, sampleCount = 256) {
+		ctx.save();
+
+		const left = this.padding.left;
+		const right = width - this.padding.right;
+		const top = this.padding.top;
+		const bottom = height - this.padding.bottom;
+
+		const drawableHeight = bottom - top;
+
+		// Precompute density samples per series
+		const densities = this.series.map((s) => {
+			const xs = s.valuesOf("x");
+
+			// Scott’s Rule bandwidth
+			const h = 1.06 * s.stddev("x") * Math.pow(xs.length, -1 / 5);
+
+			const points = [];
+			for (let i = 0; i < sampleCount; i++) {
+				const t = i / (sampleCount - 1);
+				const x = bounds.minX + t * (bounds.maxX - bounds.minX);
+				const y = this.estimateDensity(xs, x, h);
+				points.push({ x, y });
+			}
+			return points;
+		});
+
+		// Global Y scale
+		const maxDensity = Math.max(
+			...densities.flatMap((d) => d.map((p) => p.y)),
+		);
+
+		// Draw curves
+		for (let i = 0; i < densities.length; i++) {
+			const curve = densities[i];
+
+			ctx.strokeStyle = this.seriesColors[i];
+			ctx.lineWidth = this.lineThickness;
+			ctx.globalAlpha = 0.5;
+
+			ctx.beginPath();
+			for (let j = 0; j < curve.length; j++) {
+				const px =
+					left +
+					((curve[j].x - bounds.minX) / (bounds.maxX - bounds.minX)) *
+						(right - left);
+
+				const py = bottom - (curve[j].y / maxDensity) * drawableHeight;
+
+				if (j === 0) {
+					ctx.moveTo(px, py);
+				} else {
+					ctx.lineTo(px, py);
+				}
+			}
+			ctx.stroke();
+		}
+
+		ctx.restore();
+	}
+
+	drawLineOfInterest(ctx, width, height, bounds) {
+		if (this.lineOfInterest.x === undefined) return;
+
+		ctx.save();
+
+		const left = this.padding.left;
+		const right = width - this.padding.right;
+		const top = this.padding.top;
+		const bottom = height - this.padding.bottom;
+
+		const px =
+			left +
+			((this.lineOfInterest.x - bounds.minX) /
+				(bounds.maxX - bounds.minX)) *
+				(right - left);
+
+		ctx.strokeStyle = this.darkMode ? "#FFFFFF" : "#000000";
+		ctx.lineWidth = 1;
+
+		ctx.beginPath();
+		ctx.moveTo(px, top);
+		ctx.lineTo(px, bottom);
+		ctx.stroke();
+
+		ctx.restore();
+	}
+}
+
 class ScatterPlot extends Plot {
 	constructor(
 		series,
@@ -223,4 +424,4 @@ class ScatterPlot extends Plot {
 	}
 }
 
-export { Plot, ScatterPlot };
+export { Plot, HistogramPlot, ScatterPlot };

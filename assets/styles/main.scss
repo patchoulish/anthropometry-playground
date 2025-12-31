@@ -40,6 +40,13 @@ details .dropdown > ul {
 	margin: 0 !important;
 }
 
+.histogram-chart {
+	display: block;
+	width: 100%;
+	height: 100%;
+	aspect-ratio: 3 / 1;
+}
+
 .chart {
 	display: block;
 	width: 100%;

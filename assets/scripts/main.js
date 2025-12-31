@@ -1,5 +1,5 @@
 import { Series } from "./math.js";
-import { ScatterPlot } from "./plot.js";
+import { HistogramPlot, ScatterPlot } from "./plot.js";
 import { Dataset } from "./dataset.js";
 import { Gender } from "./model.js";
 
@@ -119,6 +119,13 @@ const initialize = async () => {
 		"input[name='measurementValueY']",
 	);
 	measurementValueYElement.addEventListener("input", () => {
+		refreshResults();
+	});
+
+	const measurementValueX2Element = document.querySelector(
+		"input[name='measurementValueX2']",
+	);
+	measurementValueX2Element.addEventListener("input", () => {
 		refreshResults();
 	});
 
@@ -321,7 +328,7 @@ const convertValuesForDisplay = (values, measurementId) => {
 	);
 };
 
-const buildSeries = (measurementX, measurementY) => {
+const buildHistogramSeries = (measurementX) => {
 	const series = [];
 	const seriesLabels = [];
 	const seriesColors = [];
@@ -332,10 +339,6 @@ const buildSeries = (measurementX, measurementY) => {
 				x: convertValuesForDisplay(
 					measurementX.valuesFor(Gender.MALE),
 					measurementX.id,
-				),
-				y: convertValuesForDisplay(
-					measurementY.valuesFor(Gender.MALE),
-					measurementY.id,
 				),
 			}),
 		);
@@ -350,10 +353,6 @@ const buildSeries = (measurementX, measurementY) => {
 					measurementX.valuesFor(Gender.FEMALE),
 					measurementX.id,
 				),
-				y: convertValuesForDisplay(
-					measurementY.valuesFor(Gender.FEMALE),
-					measurementY.id,
-				),
 			}),
 		);
 		seriesLabels.push("Female");
@@ -367,7 +366,96 @@ const buildSeries = (measurementX, measurementY) => {
 	};
 };
 
-const refreshResults = () => {
+const buildSeries = (measurementX, measurementY) => {
+	const series = [];
+	const seriesLabels = [];
+	const seriesColors = [];
+
+	if (preferences.value.genders.male) {
+		series.push(
+			new Series({
+				x: convertValuesForDisplay(
+					measurementX.valuesFor(Gender.MALE),
+					measurementX.id,
+				),
+				y:
+					measurementY === null
+						? []
+						: convertValuesForDisplay(
+								measurementY.valuesFor(Gender.MALE),
+								measurementY.id,
+							),
+			}),
+		);
+		seriesLabels.push("Male");
+		seriesColors.push("#2563eb");
+	}
+
+	if (preferences.value.genders.female) {
+		series.push(
+			new Series({
+				x: convertValuesForDisplay(
+					measurementX.valuesFor(Gender.FEMALE),
+					measurementX.id,
+				),
+				y:
+					measurementY === null
+						? []
+						: convertValuesForDisplay(
+								measurementY.valuesFor(Gender.FEMALE),
+								measurementY.id,
+							),
+			}),
+		);
+		seriesLabels.push("Female");
+		seriesColors.push("#db2777");
+	}
+
+	return {
+		series: series,
+		seriesLabels: seriesLabels,
+		seriesColors: seriesColors,
+	};
+};
+
+const refreshHistogramPlot = () => {
+	const measurementX = dataset.value
+		.measurements()
+		.find(
+			(m) =>
+				m.id ===
+				(document.querySelector(
+					"details[data-measurement-dropdown][name='measurementX2'] input[type=radio]:checked",
+				)?.value ?? "stature"),
+		);
+
+	const canvas = document.getElementById("histogram-plot");
+	resizeCanvasToContainer(canvas);
+
+	const series = buildHistogramSeries(measurementX);
+	const plot = new HistogramPlot(
+		series.series,
+		series.seriesColors,
+		series.seriesLabels,
+		3,
+		{
+			x: document.querySelector("input[name='measurementValueX2']").value
+				? parseFloat(
+						document.querySelector(
+							"input[name='measurementValueX2']",
+						).value,
+					)
+				: undefined,
+		},
+		{ top: 20, right: 20, bottom: 40, left: 50 },
+		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
+		getThemePreference() === "dark",
+	);
+
+	plot.render(canvas);
+};
+
+const refreshScatterPlot = () => {
 	const measurementX = dataset.value
 		.measurements()
 		.find(
@@ -419,6 +507,11 @@ const refreshResults = () => {
 	);
 
 	plot.render(canvas);
+};
+
+const refreshResults = () => {
+	refreshHistogramPlot();
+	refreshScatterPlot();
 };
 
 const preferences = {

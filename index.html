@@ -245,15 +245,65 @@
 				<hr />
 
 				<details name="visualizations" open>
-					<summary class="contrast">Bivariate Scatter Plot</summary>
+					<summary class="contrast">Univariate Distribution</summary>
+					<div class="grid visualization-grid">
+						<div>
+							<p>
+								View the distribution of a single anthropometric
+								variable. Select the variable to visualize.
+								Enter a value to see where it falls within the
+								dataset.
+							</p>
+							<div>
+								<label>X-Axis:</label>
+								<details
+									class="dropdown"
+									name="measurementX2"
+									data-measurement-dropdown
+									data-measurement-dropdown-default="stature"
+								>
+									<summary>Measurement</summary>
+									<ul>
+										<li>
+											<input
+												type="search"
+												placeholder="Search"
+												aria-label="Search"
+											/>
+										</li>
+									</ul>
+								</details>
+
+								<fieldset role="group">
+									<input
+										type="number"
+										name="measurementValueX2"
+										data-measurement-value
+									/>
+									<button
+										class="contrast"
+										data-unit-for="measurementX2"
+										disabled
+									></button>
+								</fieldset>
+							</div>
+						</div>
+						<canvas id="histogram-plot" class="histogram-chart">
+						</canvas>
+					</div>
+				</details>
+
+				<hr />
+
+				<details name="visualization2" open>
+					<summary class="contrast">Bivariate Relationship</summary>
 					<div class="grid visualization-grid">
 						<div>
 							<p>
 								View the relationship between two different
-								anthropometric measurements. Select the
-								measurements for the X and Y axes. Enter a value
-								for each to see where that point falls within
-								the dataset.
+								anthropometric variables. Select the variables
+								to visualize. Enter a value for each to see
+								where that point falls within the dataset.
 							</p>
 							<div>
 								<label>X-Axis:</label>
