@@ -59,3 +59,9 @@ details .dropdown > ul {
 		flex-direction: column;
 	}
 }
+
+@media (max-width: 1024px) {
+	.visualization-grid {
+		grid-template-columns: 1fr;
+	}
+}
