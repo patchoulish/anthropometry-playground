@@ -54,6 +54,18 @@ details .dropdown > ul {
 	aspect-ratio: 1 / 1;
 }
 
+main > *:last-child {
+	margin-bottom: 0px;
+}
+
+header li.nav-header {
+	padding-bottom: 0px;
+
+	> p {
+		margin-bottom: 0px;
+	}
+}
+
 canvas.plot {
 	display: block;
 	width: 100%;
