@@ -6,6 +6,11 @@ function stddev(x, mx) {
 	return Math.sqrt(x.reduce((s, v) => s + (v - mx) ** 2, 0) / x.length);
 }
 
+function gaussianPdf(x, mx, sx) {
+	const z = (x - mx) / sx;
+	return (1 / (sx * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
+}
+
 class Series {
 	constructor(values) {
 		this.values = values;
@@ -13,6 +18,7 @@ class Series {
 		this._stats = {
 			mean: Object.create(null),
 			stddev: Object.create(null),
+			pdf: Object.create(null),
 		};
 	}
 
@@ -44,6 +50,19 @@ class Series {
 		}
 
 		return this._stats.stddev[dim];
+	}
+
+	pdf(dim) {
+		if (this._stats.pdf[dim] === undefined) {
+			const m = this.mean(dim);
+			const s = this.stddev(dim);
+
+			this._stats.pdf[dim] = function (x) {
+				return gaussianPdf(x, m, s);
+			};
+		}
+
+		return this._stats.pdf[dim];
 	}
 }
 

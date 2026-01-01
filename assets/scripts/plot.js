@@ -47,7 +47,7 @@ class HistogramPlot extends Plot {
 		const bounds = this.calculateBounds();
 
 		this.drawAxes(ctx, width, height, bounds);
-		// this.drawBars(ctx, width, height, bounds);
+		this.drawSigmaLines(ctx, width, height, bounds);
 		this.drawDensityCurves(ctx, width, height, bounds);
 		this.drawLineOfInterest(ctx, width, height, bounds);
 	}
@@ -120,16 +120,72 @@ class HistogramPlot extends Plot {
 		ctx.restore();
 	}
 
-	gaussianKernel(u) {
-		return Math.exp(-0.5 * u * u) / Math.sqrt(2 * Math.PI);
-	}
+	drawSigmaLines(ctx, width, height, bounds) {
+		ctx.save();
 
-	estimateDensity(xs, x, bandwidth) {
-		let sum = 0;
-		for (const xi of xs) {
-			sum += this.gaussianKernel((x - xi) / bandwidth);
+		const left = this.padding.left;
+		const right = width - this.padding.right;
+		const top = this.padding.top;
+		const bottom = height - this.padding.bottom;
+		const drawableHeight = bottom - top;
+
+		ctx.lineWidth = 1;
+		ctx.globalAlpha = 0.5;
+		ctx.setLineDash([4, 4]);
+
+		// --- Precompute global max density (match drawDensityCurves) ---
+		const sampleCount = 256;
+		let maxDensity = 0;
+
+		for (const s of this.series) {
+			const pdf = s.pdf("x");
+
+			for (let i = 0; i < sampleCount; i++) {
+				const t = i / (sampleCount - 1);
+				const x = bounds.minX + t * (bounds.maxX - bounds.minX);
+				maxDensity = Math.max(maxDensity, pdf(x));
+			}
 		}
-		return sum / (xs.length * bandwidth);
+
+		// --- Draw clipped sigma lines ---
+		for (let i = 0; i < this.series.length; i++) {
+			const s = this.series[i];
+			const color = this.seriesColors[i];
+
+			const mean = s.mean("x");
+			const std = s.stddev("x");
+			const pdf = s.pdf("x");
+
+			const positions = [
+				mean,
+				mean - 2 * std,
+				mean - 1 * std,
+				mean + 1 * std,
+				mean + 2 * std,
+			];
+
+			ctx.strokeStyle = color;
+
+			for (const x of positions) {
+				if (x < bounds.minX || x > bounds.maxX) continue;
+
+				const density = pdf(x);
+
+				const px =
+					left +
+					((x - bounds.minX) / (bounds.maxX - bounds.minX)) *
+						(right - left);
+
+				const py = bottom - (density / maxDensity) * drawableHeight;
+
+				ctx.beginPath();
+				ctx.moveTo(px, bottom);
+				ctx.lineTo(px, py);
+				ctx.stroke();
+			}
+		}
+
+		ctx.restore();
 	}
 
 	drawDensityCurves(ctx, width, height, bounds, sampleCount = 256) {
@@ -142,31 +198,28 @@ class HistogramPlot extends Plot {
 
 		const drawableHeight = bottom - top;
 
-		// Precompute density samples per series
-		const densities = this.series.map((s) => {
-			const xs = s.valuesOf("x");
-
-			// Scott’s Rule bandwidth
-			const h = 1.06 * s.stddev("x") * Math.pow(xs.length, -1 / 5);
+		// --- Sample PDFs per series ---
+		const curves = this.series.map((s) => {
+			const pdf = s.pdf("x");
 
 			const points = [];
 			for (let i = 0; i < sampleCount; i++) {
 				const t = i / (sampleCount - 1);
 				const x = bounds.minX + t * (bounds.maxX - bounds.minX);
-				const y = this.estimateDensity(xs, x, h);
+				const y = pdf(x);
 				points.push({ x, y });
 			}
 			return points;
 		});
 
-		// Global Y scale
+		// --- Global Y scale ---
 		const maxDensity = Math.max(
-			...densities.flatMap((d) => d.map((p) => p.y)),
+			...curves.flatMap((c) => c.map((p) => p.y)),
 		);
 
-		// Draw curves
-		for (let i = 0; i < densities.length; i++) {
-			const curve = densities[i];
+		// --- Draw curves ---
+		for (let i = 0; i < curves.length; i++) {
+			const curve = curves[i];
 
 			ctx.strokeStyle = this.seriesColors[i];
 			ctx.lineWidth = this.lineThickness;
