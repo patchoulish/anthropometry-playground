@@ -1,5 +1,0 @@
-overrides:
-  # Use the Angular parser for Handlebars files to support partials.
-  - files: "**/*.hbs"
-    options:
-      parser: "angular"

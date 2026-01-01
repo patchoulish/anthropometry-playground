@@ -1,3 +1,17 @@
+[formatter.djlint]
+command = "djlint"
+includes = [
+  "*.hbs",
+  "*.html"
+]
+excludes = ["_site/**"] # Exclude build output.
+options = [
+  "--reformat",
+  "--quiet",
+  "--indent",
+  "2"
+]
+
 [formatter.nix]
 command = "nixfmt"
 includes = ["*.nix"]
@@ -7,8 +21,6 @@ excludes = ["_site/**"] # Exclude build output.
 command = "prettier"
 includes = [
   "*.css",
-  "*.hbs",
-  "*.html",
   "*.js",
   "*.json",
   "*.md",

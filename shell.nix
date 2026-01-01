@@ -22,6 +22,7 @@ pkgs.mkShell {
     nixfmt-rfc-style
     toml-sort
     prettier
+    djlint
   ];
 
   shellHook = ''
