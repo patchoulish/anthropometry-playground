@@ -87,8 +87,8 @@ title: "Anthropometry Playground"
     </details>
   </div>
   <hr />
-  <details name="visualizations" open>
-    <summary class="contrast">Univariate Distribution</summary>
+  <details name="visualizations1" open>
+    <summary class="contrast">001. Actual Distribution</summary>
     <div class="grid visualization-grid">
       <div>
         <p>
@@ -99,7 +99,7 @@ title: "Anthropometry Playground"
         <div>
           <label>X-Axis:</label>
           <details class="dropdown"
-                   name="measurementX2"
+                   name="measurementXHistogram"
                    data-measurement-dropdown
                    data-measurement-dropdown-default="stature">
             <summary>Measurement</summary>
@@ -110,8 +110,10 @@ title: "Anthropometry Playground"
             </ul>
           </details>
           <fieldset role="group">
-            <input type="number" name="measurementValueX2" data-measurement-value />
-            <button class="contrast" data-unit-for="measurementX2" disabled></button>
+            <input type="number"
+                   name="measurementValueXHistogram"
+                   data-measurement-value />
+            <button class="contrast" data-unit-for="measurementXHistogram" disabled></button>
           </fieldset>
         </div>
       </div>
@@ -119,19 +121,19 @@ title: "Anthropometry Playground"
     </div>
   </details>
   <hr />
-  <details name="visualization2" open>
-    <summary class="contrast">Bivariate Relationship</summary>
+  <details name="visualizations2" open>
+    <summary class="contrast">002. Actual Joint Distribution</summary>
     <div class="grid visualization-grid">
       <div>
         <p>
-          View the relationship between two different anthropometric
+          View the joint distribution between two anthropometric
           variables. Select the variables to visualize. Enter a value
           for each to see where that point falls within the dataset.
         </p>
         <div>
           <label>X-Axis:</label>
           <details class="dropdown"
-                   name="measurementX"
+                   name="measurementXScatter"
                    data-measurement-dropdown
                    data-measurement-dropdown-default="stature">
             <summary>Measurement</summary>
@@ -142,14 +144,14 @@ title: "Anthropometry Playground"
             </ul>
           </details>
           <fieldset role="group">
-            <input type="number" name="measurementValueX" data-measurement-value />
-            <button class="contrast" data-unit-for="measurementX" disabled></button>
+            <input type="number" name="measurementValueXScatter" data-measurement-value />
+            <button class="contrast" data-unit-for="measurementXScatter" disabled></button>
           </fieldset>
         </div>
         <div>
           <label>Y-Axis:</label>
           <details class="dropdown"
-                   name="measurementY"
+                   name="measurementYScatter"
                    data-measurement-dropdown
                    data-measurement-dropdown-default="weightkg">
             <summary>Measurement</summary>
@@ -160,12 +162,44 @@ title: "Anthropometry Playground"
             </ul>
           </details>
           <fieldset role="group">
-            <input type="number" name="measurementValueY" data-measurement-value />
-            <button class="contrast" data-unit-for="measurementY" disabled></button>
+            <input type="number" name="measurementValueYScatter" data-measurement-value />
+            <button class="contrast" data-unit-for="measurementYScatter" disabled></button>
           </fieldset>
         </div>
       </div>
       {{> components/plots/scatter id="scatter-plot" }}
+    </div>
+  </details>
+  <hr />
+  <details name="visualizations3" open>
+    <summary class="contrast">003. Modelled Probability Distribution</summary>
+    <div class="grid visualization-grid">
+      <div>
+        <p>
+          View the modelled probability distribution for a single anthropometric variable.
+          Select the variable to visualize. Enter a value to see where
+          it falls within the dataset.
+        </p>
+        <div>
+          <label>X-Axis:</label>
+          <details class="dropdown"
+                   name="measurementXDensity"
+                   data-measurement-dropdown
+                   data-measurement-dropdown-default="stature">
+            <summary>Measurement</summary>
+            <ul>
+              <li>
+                <input type="search" placeholder="Search" aria-label="Search" />
+              </li>
+            </ul>
+          </details>
+          <fieldset role="group">
+            <input type="number" name="measurementValueXDensity" data-measurement-value />
+            <button class="contrast" data-unit-for="measurementXDensity" disabled></button>
+          </fieldset>
+        </div>
+      </div>
+      {{> components/plots/density id="density-plot" }}
     </div>
   </details>
 </article>

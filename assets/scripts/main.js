@@ -1,5 +1,5 @@
 import { Series } from "./math.js";
-import { DensityPlot, ScatterPlot } from "./plot.js";
+import { HistogramPlot, DensityPlot, ScatterPlot } from "./plot.js";
 import { Dataset } from "./dataset.js";
 import { Gender } from "./model.js";
 
@@ -108,25 +108,31 @@ const initialize = async () => {
 	measurementDropdownElements.forEach(initializeMeasurementDropdown);
 
 	// Refresh results when measurement value inputs change.
-	const measurementValueXElement = document.querySelector(
-		"input[name='measurementValueX']",
+	const measurementValueXHistogramElement = document.querySelector(
+		"input[name='measurementValueXHistogram']",
 	);
-	measurementValueXElement.addEventListener("input", () => {
-		refreshResults();
+	measurementValueXHistogramElement.addEventListener("input", () => {
+		refreshHistogramPlot();
 	});
 
-	const measurementValueYElement = document.querySelector(
-		"input[name='measurementValueY']",
+	const measurementValueXScatterElement = document.querySelector(
+		"input[name='measurementValueXScatter']",
 	);
-	measurementValueYElement.addEventListener("input", () => {
-		refreshResults();
+	measurementValueXScatterElement.addEventListener("input", () => {
+		refreshScatterPlot();
+	});
+	const measurementValueYScatterElement = document.querySelector(
+		"input[name='measurementValueYScatter']",
+	);
+	measurementValueYScatterElement.addEventListener("input", () => {
+		refreshScatterPlot();
 	});
 
-	const measurementValueX2Element = document.querySelector(
-		"input[name='measurementValueX2']",
+	const measurementValueXDElement = document.querySelector(
+		"input[name='measurementValueXDensity']",
 	);
-	measurementValueX2Element.addEventListener("input", () => {
-		refreshResults();
+	measurementValueXDElement.addEventListener("input", () => {
+		refreshDensityPlot();
 	});
 
 	refreshResults();
@@ -324,7 +330,7 @@ const convertValuesForDisplay = (values, measurementId) => {
 	);
 };
 
-const buildHistogramSeries = (measurementX) => {
+const buildSeries = (measurementX) => {
 	const series = [];
 	const seriesLabels = [];
 	const seriesColors = [];
@@ -362,7 +368,7 @@ const buildHistogramSeries = (measurementX) => {
 	};
 };
 
-const buildSeries = (measurementX, measurementY) => {
+const buildJointSeries = (measurementX, measurementY) => {
 	const series = [];
 	const seriesLabels = [];
 	const seriesColors = [];
@@ -421,28 +427,31 @@ const refreshHistogramPlot = () => {
 			(m) =>
 				m.id ===
 				(document.querySelector(
-					"details[data-measurement-dropdown][name='measurementX2'] input[type=radio]:checked",
+					"details[data-measurement-dropdown][name='measurementXHistogram'] input[type=radio]:checked",
 				)?.value ?? "stature"),
 		);
 
 	const canvas = document.getElementById("histogram-plot");
 	resizeCanvasToContainer(canvas);
 
-	const series = buildHistogramSeries(measurementX);
-	const plot = new DensityPlot(
+	const series = buildSeries(measurementX);
+	const plot = new HistogramPlot(
 		series.series,
 		series.seriesColors,
 		series.seriesLabels,
 		3,
 		{
-			x: document.querySelector("input[name='measurementValueX2']").value
+			x: document.querySelector(
+				"input[name='measurementValueXHistogram']",
+			).value
 				? parseFloat(
 						document.querySelector(
-							"input[name='measurementValueX2']",
+							"input[name='measurementValueXHistogram']",
 						).value,
 					)
 				: undefined,
 		},
+		32,
 		{ top: 20, right: 20, bottom: 40, left: 50 },
 		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
 		getThemePreference() === "dark",
@@ -458,7 +467,7 @@ const refreshScatterPlot = () => {
 			(m) =>
 				m.id ===
 				(document.querySelector(
-					"details[data-measurement-dropdown][name='measurementX'] input[type=radio]:checked",
+					"details[data-measurement-dropdown][name='measurementXScatter'] input[type=radio]:checked",
 				)?.value ?? "stature"),
 		);
 	const measurementY = dataset.value
@@ -467,31 +476,33 @@ const refreshScatterPlot = () => {
 			(m) =>
 				m.id ===
 				(document.querySelector(
-					"details[data-measurement-dropdown][name='measurementY'] input[type=radio]:checked",
+					"details[data-measurement-dropdown][name='measurementYScatter'] input[type=radio]:checked",
 				)?.value ?? "weightkg"),
 		);
 
 	const canvas = document.getElementById("scatter-plot");
 	resizeCanvasToContainer(canvas);
 
-	const series = buildSeries(measurementX, measurementY);
+	const series = buildJointSeries(measurementX, measurementY);
 	const plot = new ScatterPlot(
 		series.series,
 		series.seriesColors,
 		series.seriesLabels,
 		3,
 		{
-			x: document.querySelector("input[name='measurementValueX']").value
+			x: document.querySelector("input[name='measurementValueXScatter']")
+				.value
 				? parseFloat(
 						document.querySelector(
-							"input[name='measurementValueX']",
+							"input[name='measurementValueXScatter']",
 						).value,
 					)
 				: undefined,
-			y: document.querySelector("input[name='measurementValueY']").value
+			y: document.querySelector("input[name='measurementValueYScatter']")
+				.value
 				? parseFloat(
 						document.querySelector(
-							"input[name='measurementValueY']",
+							"input[name='measurementValueYScatter']",
 						).value,
 					)
 				: undefined,
@@ -505,9 +516,48 @@ const refreshScatterPlot = () => {
 	plot.render(canvas);
 };
 
+const refreshDensityPlot = () => {
+	const measurementX = dataset.value
+		.measurements()
+		.find(
+			(m) =>
+				m.id ===
+				(document.querySelector(
+					"details[data-measurement-dropdown][name='measurementXDensity'] input[type=radio]:checked",
+				)?.value ?? "stature"),
+		);
+
+	const canvas = document.getElementById("density-plot");
+	resizeCanvasToContainer(canvas);
+
+	const series = buildSeries(measurementX);
+	const plot = new DensityPlot(
+		series.series,
+		series.seriesColors,
+		series.seriesLabels,
+		3,
+		{
+			x: document.querySelector("input[name='measurementValueXDensity']")
+				.value
+				? parseFloat(
+						document.querySelector(
+							"input[name='measurementValueXDensity']",
+						).value,
+					)
+				: undefined,
+		},
+		{ top: 20, right: 20, bottom: 40, left: 50 },
+		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
+		getThemePreference() === "dark",
+	);
+
+	plot.render(canvas);
+};
+
 const refreshResults = () => {
 	refreshHistogramPlot();
 	refreshScatterPlot();
+	refreshDensityPlot();
 };
 
 const preferences = {

@@ -20,6 +20,186 @@ class Plot {
 	}
 }
 
+class HistogramPlot extends Plot {
+	constructor(
+		series,
+		seriesColors,
+		seriesLabels,
+		lineThickness = 1,
+		lineOfInterest = { x: undefined },
+		binCount = 32,
+		padding = { top: 20, right: 20, bottom: 20, left: 20 },
+		xLabel = "",
+		darkMode = false,
+	) {
+		super();
+
+		this.series = series;
+		this.seriesColors = seriesColors;
+		this.seriesLabels = seriesLabels;
+		this.lineThickness = lineThickness;
+		this.lineOfInterest = lineOfInterest;
+		this.binCount = binCount;
+		this.padding = padding;
+		this.xLabel = xLabel;
+		this.darkMode = darkMode;
+	}
+
+	handleRender(ctx, width, height) {
+		const bounds = this.calculateBounds();
+
+		this.drawAxes(ctx, width, height, bounds);
+		this.drawHistogramBars(ctx, width, height, bounds);
+		this.drawLineOfInterest(ctx, width, height, bounds);
+	}
+
+	calculateBounds() {
+		const xs = this.series.flatMap((s) => s.valuesOf("x"));
+		return {
+			minX: Math.min(...xs),
+			maxX: Math.max(...xs),
+		};
+	}
+
+	drawAxes(ctx, width, height, bounds) {
+		ctx.save();
+
+		ctx.strokeStyle = this.darkMode ? "#FFFFFF" : "#000000";
+		ctx.fillStyle = this.darkMode ? "#FFFFFF" : "#000000";
+		ctx.lineWidth = 1;
+		ctx.font = "12px monospace";
+
+		const left = this.padding.left;
+		const right = width - this.padding.right;
+		const top = this.padding.top;
+		const bottom = height - this.padding.bottom;
+
+		// X axis line.
+		ctx.beginPath();
+		ctx.moveTo(left, bottom);
+		ctx.lineTo(right, bottom);
+		ctx.stroke();
+
+		this.drawAxesXTicks(ctx, left, right, bottom, bounds);
+		this.drawAxesLabels(ctx, width, height);
+
+		ctx.restore();
+	}
+
+	drawAxesXTicks(ctx, left, right, bottom, bounds, tickCount = 5) {
+		for (let i = 0; i <= tickCount; i++) {
+			const t = i / tickCount;
+			const x = left + t * (right - left);
+			const value = bounds.minX + t * (bounds.maxX - bounds.minX);
+
+			// Tick line.
+			ctx.beginPath();
+			ctx.moveTo(x, bottom);
+			ctx.lineTo(x, bottom + 5);
+			ctx.stroke();
+
+			ctx.textAlign = "center";
+			ctx.textBaseline = "top";
+			ctx.fillText(value.toFixed(1), x, bottom + 7);
+		}
+	}
+
+	drawAxesLabels(ctx, width, height) {
+		ctx.save();
+		ctx.font = "12px monospace";
+		ctx.textAlign = "center";
+		ctx.textBaseline = "top";
+		ctx.fillText(this.xLabel, width / 2, height - this.padding.bottom + 25);
+		ctx.restore();
+	}
+
+	drawHistogramBars(ctx, width, height, bounds) {
+		ctx.save();
+
+		const left = this.padding.left;
+		const right = width - this.padding.right;
+		const top = this.padding.top;
+		const bottom = height - this.padding.bottom;
+		const drawableHeight = bottom - top;
+
+		// Determine effective bin count: clamp between 1 and distinct value count, capped by binCount.
+		const allXs = this.series.flatMap((s) => s.valuesOf("x"));
+		const distinctCount = Math.max(1, new Set(allXs).size);
+		const binCount = Math.min(this.binCount, distinctCount);
+
+		const span = bounds.maxX - bounds.minX || 1; // avoid zero span
+		const binWidthValue = span / binCount;
+
+		// Build bins per series: counts.
+		const allSeriesBins = this.series.map((s) => {
+			const xs = s.valuesOf("x");
+			const bins = new Array(binCount).fill(0);
+			for (const x of xs) {
+				const idx =
+					x === bounds.maxX
+						? binCount - 1
+						: Math.floor((x - bounds.minX) / binWidthValue);
+				if (idx >= 0 && idx < binCount) bins[idx]++;
+			}
+			return bins;
+		});
+
+		// Global max for scaling.
+		const maxCount = Math.max(
+			...allSeriesBins.flatMap((bins) => bins),
+			1, // avoid divide by zero
+		);
+
+		const binPixelWidth = (right - left) / binCount;
+
+		for (let b = 0; b < binCount; b++) {
+			const binLeft = left + b * binPixelWidth;
+
+			for (let si = 0; si < this.series.length; si++) {
+				const count = allSeriesBins[si][b];
+				if (count === 0) continue;
+
+				const barHeight = (count / maxCount) * drawableHeight;
+				const x0 = binLeft;
+				const y0 = bottom - barHeight;
+
+				ctx.fillStyle = this.seriesColors[si];
+				ctx.globalAlpha = 0.7;
+				ctx.fillRect(x0, y0, binPixelWidth, barHeight);
+			}
+		}
+
+		ctx.restore();
+	}
+
+	drawLineOfInterest(ctx, width, height, bounds) {
+		if (this.lineOfInterest.x === undefined) return;
+
+		ctx.save();
+
+		const left = this.padding.left;
+		const right = width - this.padding.right;
+		const top = this.padding.top;
+		const bottom = height - this.padding.bottom;
+
+		const px =
+			left +
+			((this.lineOfInterest.x - bounds.minX) /
+				(bounds.maxX - bounds.minX)) *
+				(right - left);
+
+		ctx.strokeStyle = this.darkMode ? "#FFFFFF" : "#000000";
+		ctx.lineWidth = 1;
+
+		ctx.beginPath();
+		ctx.moveTo(px, top);
+		ctx.lineTo(px, bottom);
+		ctx.stroke();
+
+		ctx.restore();
+	}
+}
+
 class DensityPlot extends Plot {
 	constructor(
 		series,
@@ -478,4 +658,4 @@ class ScatterPlot extends Plot {
 	}
 }
 
-export { Plot, DensityPlot, ScatterPlot };
+export { Plot, HistogramPlot, DensityPlot, ScatterPlot };
