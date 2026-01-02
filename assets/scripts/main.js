@@ -1,5 +1,5 @@
 import { Series } from "./math.js";
-import { HistogramPlot, ScatterPlot } from "./plot.js";
+import { DensityPlot, ScatterPlot } from "./plot.js";
 import { Dataset } from "./dataset.js";
 import { Gender } from "./model.js";
 
@@ -429,7 +429,7 @@ const refreshHistogramPlot = () => {
 	resizeCanvasToContainer(canvas);
 
 	const series = buildHistogramSeries(measurementX);
-	const plot = new HistogramPlot(
+	const plot = new DensityPlot(
 		series.series,
 		series.seriesColors,
 		series.seriesLabels,

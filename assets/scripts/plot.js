@@ -20,7 +20,7 @@ class Plot {
 	}
 }
 
-class HistogramPlot extends Plot {
+class DensityPlot extends Plot {
 	constructor(
 		series,
 		seriesColors,
@@ -478,4 +478,4 @@ class ScatterPlot extends Plot {
 	}
 }
 
-export { Plot, HistogramPlot, ScatterPlot };
+export { Plot, DensityPlot, ScatterPlot };
