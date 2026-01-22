@@ -657,7 +657,7 @@ window.addEventListener(
 	"resize",
 	debounce(() => {
 		refreshResults();
-	}, 150),
+	}, 16.67),
 );
 window.addEventListener("themechange", () => {
 	refreshResults();
