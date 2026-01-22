@@ -93,6 +93,8 @@ export default async function (eleventyConfig) {
 	// Passthrough copy for static assets.
 	eleventyConfig.addPassthroughCopy({
 		"assets/scripts/": "assets/scripts/",
+		"assets/data/ansur1/measurements.json":
+			"assets/data/ansur1/measurements.json",
 		"assets/data/ansur2/measurements.json":
 			"assets/data/ansur2/measurements.json",
 	});
