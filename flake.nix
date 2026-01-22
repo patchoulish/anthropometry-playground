@@ -65,7 +65,6 @@
           packages = requiredPackages;
 
           shellHook = ''
-
             echo "Setting up Git hooks..."
             if [ -f .git/hooks/pre-commit ]; then
               echo "Git hooks already installed."
