@@ -1,0 +1,30 @@
+name: Copilot
+on:
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  workflow_dispatch:
+jobs:
+  copilot-setup-steps:
+    name: Setup
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Set up environment
+        run: nix run .#profile.switch
+      - name: Configure precommit hooks
+        run: pre-commit install
+      - name: List command recipes
+        run: just
