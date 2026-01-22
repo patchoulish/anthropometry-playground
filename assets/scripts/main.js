@@ -289,14 +289,21 @@ const handleUnitPreferenceChange = (target, oldUnit) => {
 				);
 
 				// Convert the user input value from old unit to new unit
+				const dropdownName =
+					measurementUnitElement.getAttribute("data-unit-for");
+				const inputName = dropdownName.replace(
+					"measurement",
+					"measurementValue",
+				);
 				const measurementInputElement = document.querySelector(
-					`input[data-measurement-value][name="${measurementUnitElement.getAttribute("data-unit-for").replace("measurement", "measurementValue")}"]`,
+					`input[data-measurement-value][name="${inputName}"]`,
 				);
 
 				if (
 					measurementInputElement &&
 					measurementInputElement.value &&
-					oldUnit
+					oldUnit &&
+					inputName !== dropdownName // Ensure replacement occurred
 				) {
 					const measurementId =
 						measurementDropdownCheckedOptionElement.value;
@@ -308,12 +315,37 @@ const handleUnitPreferenceChange = (target, oldUnit) => {
 						const currentValue = parseFloat(
 							measurementInputElement.value,
 						);
+
+						// Validate that the current value is a valid number
+						if (isNaN(currentValue)) {
+							return;
+						}
+
+						const oldUnitSystem =
+							measurement.unit.forSystem[oldUnit];
+						const newUnitSystem =
+							measurement.unit.forSystem[preferences.value.unit];
+
+						// Validate that both unit systems exist
+						if (!oldUnitSystem || !newUnitSystem) {
+							return;
+						}
+
 						const oldConversionFactor =
-							measurement.unit.forSystem[oldUnit]
-								.conversionFactor;
+							oldUnitSystem.conversionFactor;
 						const newConversionFactor =
-							measurement.unit.forSystem[preferences.value.unit]
-								.conversionFactor;
+							newUnitSystem.conversionFactor;
+
+						// Validate conversion factors to prevent division by zero
+						if (
+							!oldConversionFactor ||
+							oldConversionFactor === 0 ||
+							!newConversionFactor ||
+							newConversionFactor === 0
+						) {
+							return;
+						}
+
 						const newValue =
 							currentValue *
 							(newConversionFactor / oldConversionFactor);
