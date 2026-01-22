@@ -106,6 +106,11 @@ export default async function (eleventyConfig) {
 			"assets/data/ansur1/measurements.json",
 		"assets/data/ansur2/measurements.json":
 			"assets/data/ansur2/measurements.json",
+		"favicon.ico": "favicon.ico",
+		"favicon.svg": "favicon.svg",
+		"apple-touch-icon.png": "apple-touch-icon.png",
+		"android-chrome-192x192.png": "android-chrome-192x192.png",
+		"android-chrome-512x512.png": "android-chrome-512x512.png",
 	});
 
 	eleventyConfig.setChokidarConfig({
