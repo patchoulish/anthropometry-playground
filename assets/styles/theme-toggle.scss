@@ -16,6 +16,11 @@
 
 @import "https://unpkg.com/open-props/easings.min.css";
 
+:root {
+	--icon-fill: currentColor;
+	--icon-fill-hover: currentColor;
+}
+
 .sun-and-moon > :is(.moon, .sun, .sun-beams) {
 	transform-origin: center;
 }
