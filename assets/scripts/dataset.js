@@ -4,6 +4,7 @@ import { Measurement, Unit } from "./model.js";
  * Represents a dataset of measurements.
  */
 class Dataset {
+	static ANSUR1 = new Dataset("ansur1", "ANSUR I");
 	static ANSUR2 = new Dataset("ansur2", "ANSUR II");
 
 	/**
@@ -11,7 +12,7 @@ class Dataset {
 	 * @returns {Dataset[]} An array of all datasets.
 	 */
 	static all() {
-		return [this.ANSUR2];
+		return [this.ANSUR1, this.ANSUR2];
 	}
 
 	/**
