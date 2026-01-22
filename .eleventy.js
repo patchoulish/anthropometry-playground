@@ -106,6 +106,7 @@ export default async function (eleventyConfig) {
 			"assets/data/ansur1/measurements.json",
 		"assets/data/ansur2/measurements.json":
 			"assets/data/ansur2/measurements.json",
+		"site.webmanifest": "site.webmanifest",
 		"favicon.ico": "favicon.ico",
 		"favicon.svg": "favicon.svg",
 		"apple-touch-icon.png": "apple-touch-icon.png",
