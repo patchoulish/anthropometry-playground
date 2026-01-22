@@ -4,7 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark light" />
+    <!-- SEO Meta -->
+    <meta name="description"
+          content="{{#if description}}{{ description }}{{ else }}Interactive browser-based tool for analyzing anthropometric data from ANSUR surveys. Explore body measurement distributions, correlations, and statistical models.{{/if}}" />
+    <meta name="keywords"
+          content="anthropometry, ANSUR, body measurements, anthropometric data, statistics, data visualization" />
+    <meta name="author" content="patchoulish" />
+    <meta name="theme-color" content="#13171f" />
+    <!-- Open Graph Meta -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:description"
+          content="{{#if description}}{{ description }}{{ else }}Interactive browser-based tool for analyzing anthropometric data from ANSUR surveys. Explore body measurement distributions, correlations, and statistical models.{{/if}}" />
+    <meta property="og:url"
+          content="{{#if canonicalUrl}}{{ canonicalUrl }}{{ else }}https://anthro.patchouli.sh/{{/if}}" />
+    <meta property="og:site_name" content="Anthropometry Playground" />
+    <!-- Twitter Card Meta -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ title }}" />
+    <meta name="twitter:description"
+          content="{{#if description}}{{ description }}{{ else }}Interactive browser-based tool for analyzing anthropometric data from ANSUR surveys. Explore body measurement distributions, correlations, and statistical models.{{/if}}" />
+    <!-- Page Title -->
     <title>{{ title }}</title>
+    <!-- Canonical URL -->
+    <link rel="canonical"
+          href="{{#if canonicalUrl}}{{ canonicalUrl }}{{ else }}https://anthro.patchouli.sh/{{/if}}" />
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="assets/styles/theme-toggle.css" />
     <link rel="stylesheet" href="assets/styles/main.css" />
   </head>
