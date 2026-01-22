@@ -634,10 +634,22 @@ const dataset = {
 	value: null,
 };
 
+// Debounce utility function to limit how often a function is called
+const debounce = (func, delay) => {
+	let timeoutId;
+	return (...args) => {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => func(...args), delay);
+	};
+};
+
 window.addEventListener("DOMContentLoaded", initialize);
-window.addEventListener("resize", () => {
-	refreshResults();
-});
+window.addEventListener(
+	"resize",
+	debounce(() => {
+		refreshResults();
+	}, 150),
+);
 window.addEventListener("themechange", () => {
 	refreshResults();
 });
