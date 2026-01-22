@@ -373,14 +373,18 @@ const getUnitAbbreviationForMeasurement = (measurementId) => {
 };
 
 const resizeCanvasToContainer = (canvas) => {
-	const canvasSize = canvas.getBoundingClientRect();
 	const dpr = window.devicePixelRatio || 1;
 
-	canvas.width = Math.floor(canvasSize.width * dpr);
-	canvas.height = Math.floor(canvasSize.height * dpr);
+	// Use offsetWidth/offsetHeight to get the current rendered size
+	// This forces a layout recalculation and gives us accurate dimensions
+	const width = canvas.offsetWidth;
+	const height = canvas.offsetHeight;
 
-	canvas.style.width = `${canvasSize.width}px`;
-	canvas.style.height = `${canvasSize.height}px`;
+	canvas.width = Math.floor(width * dpr);
+	canvas.height = Math.floor(height * dpr);
+
+	canvas.style.width = `${width}px`;
+	canvas.style.height = `${height}px`;
 
 	const ctx = canvas.getContext("2d");
 	ctx.scale(dpr, dpr);
