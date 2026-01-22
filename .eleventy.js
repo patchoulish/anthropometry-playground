@@ -63,6 +63,12 @@ export default async function (eleventyConfig) {
 				for (let [key, value] of Object.entries(row)) {
 					// Convert key to lowercase and strip underscores and hyphens.
 					let normalizedKey = key.toLowerCase().replace(/[_-]/g, "");
+
+					// Fix specific default keys.
+					if (normalizedKey === "weightkg") {
+						normalizedKey = "weight";
+					}
+
 					if (!(normalizedKey in columnarResult)) {
 						columnarResult[normalizedKey] = [];
 					}
