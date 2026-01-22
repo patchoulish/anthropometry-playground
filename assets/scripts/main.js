@@ -388,9 +388,6 @@ const resizeCanvasToContainer = (canvas) => {
 	canvas.width = Math.floor(width * dpr);
 	canvas.height = Math.floor(height * dpr);
 
-	canvas.style.width = `${width}px`;
-	canvas.style.height = `${height}px`;
-
 	const ctx = canvas.getContext("2d");
 	ctx.scale(dpr, dpr);
 };
