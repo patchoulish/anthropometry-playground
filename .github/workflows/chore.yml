@@ -1,0 +1,75 @@
+name: Chore
+on:
+  schedule:
+    # Run at 00:00 UTC every day.
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+jobs:
+  stale-check:
+    name: Stale Issue/PR Check
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      issues: write
+      pull-requests: write
+    env:
+      DAYS_BEFORE_STALE: 60
+      DAYS_BEFORE_CLOSE: 7
+    steps:
+      - name: Check for stale issues and PRs
+        uses: actions/stale@v10
+        with:
+          days-before-stale: ${{ env.DAYS_BEFORE_STALE }}
+          days-before-close: ${{ env.DAYS_BEFORE_CLOSE }}
+          exempt-issue-labels: "always-fresh"
+          stale-issue-label: "stale"
+          stale-issue-message: |
+            This issue has been marked as stale because it has had no activity for ${{ env.DAYS_BEFORE_STALE }}+ days.
+
+            It will be closed in ${{ env.DAYS_BEFORE_CLOSE }} days if no further activity occurs.
+          close-issue-message: |
+            This issue is being closed because it has been stale for an additional ${{ env.DAYS_BEFORE_CLOSE }} days without any activity.
+
+            If it is still relevant, please feel free to reopen it or create a new issue.
+          exempt-pr-labels: "always-fresh"
+          stale-pr-label: "stale"
+          stale-pr-message: "This pull request has been marked as stale because it has had no activity for ${{ env.DAYS_BEFORE_STALE }}+ days.\n\nIt will be closed in ${{ env.DAYS_BEFORE_CLOSE }} days if no further activity occurs. \n"
+          close-pr-message: |
+            This pull request is being closed because it has been stale for an additional ${{ env.DAYS_BEFORE_CLOSE }} days without any activity.
+
+            If it is still relevant, please feel free to reopen it or create a new pull request.
+  update-flake-inputs:
+    name: Update Flake Inputs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Update flake inputs
+        run: nix flake update
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if git diff --quiet flake.lock; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      - name: Create pull request
+        if: steps.check-changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update flake inputs"
+          title: "Update flake inputs"
+          body: This pull request updates `flake.lock` with the latest versions of all flake inputs.
+          branch: github-actions/update-flake-inputs
+          delete-branch: true
+          labels: "chore"
+          assignees: "patchoulish"
