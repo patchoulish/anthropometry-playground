@@ -41,7 +41,7 @@
 
           # For formatting.
           treefmt
-          nixfmt-rfc-style
+          nixfmt
           toml-sort
           prettier
           djlint
