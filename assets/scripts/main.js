@@ -373,12 +373,17 @@ const getUnitAbbreviationForMeasurement = (measurementId) => {
 };
 
 const resizeCanvasToContainer = (canvas) => {
+	if (!canvas) return;
+
 	const dpr = window.devicePixelRatio || 1;
 
 	// Use offsetWidth/offsetHeight to get the current rendered size
 	// This forces a layout recalculation and gives us accurate dimensions
 	const width = canvas.offsetWidth;
 	const height = canvas.offsetHeight;
+
+	// If dimensions are 0, the canvas may not be rendered yet
+	if (width === 0 || height === 0) return;
 
 	canvas.width = Math.floor(width * dpr);
 	canvas.height = Math.floor(height * dpr);
