@@ -61,15 +61,18 @@ export default async function (eleventyConfig) {
 			let columnarResult = {};
 			for (let row of result) {
 				for (let [key, value] of Object.entries(row)) {
-					if (!(key in columnarResult)) {
-						columnarResult[key] = [];
+					// Convert key to lowercase and strip underscores and hyphens.
+					let normalizedKey = key.toLowerCase().replace(/[_-]/g, "");
+					if (!(normalizedKey in columnarResult)) {
+						columnarResult[normalizedKey] = [];
 					}
+
 					// Convert numeric values from strings to numbers.
 					let numericValue = Number(value);
 					if (!isNaN(numericValue)) {
-						columnarResult[key].push(numericValue);
+						columnarResult[normalizedKey].push(numericValue);
 					} else {
-						columnarResult[key].push(value);
+						columnarResult[normalizedKey].push(value);
 					}
 				}
 			}
