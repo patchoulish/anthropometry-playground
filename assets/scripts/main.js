@@ -93,9 +93,10 @@ const initialize = async () => {
 					refreshResults();
 					break;
 				case "unit":
+					const oldUnit = preferences.value.unit;
 					preferences.value.unit = target.value;
 					setPreferences();
-					handleUnitPreferenceChange(target);
+					handleUnitPreferenceChange(target, oldUnit);
 					refreshResults();
 					break;
 			}
@@ -263,7 +264,7 @@ const handleMeasurementDropdownOptionChange = (
 	refreshResults();
 };
 
-const handleUnitPreferenceChange = (target) => {
+const handleUnitPreferenceChange = (target, oldUnit) => {
 	document
 		.querySelectorAll("button[data-unit-for]")
 		.forEach((measurementUnitElement) => {
@@ -286,6 +287,39 @@ const handleUnitPreferenceChange = (target) => {
 					measurementDropdownElement,
 					[measurementUnitElement],
 				);
+
+				// Convert the user input value from old unit to new unit
+				const measurementInputElement = document.querySelector(
+					`input[data-measurement-value][name="${measurementUnitElement.getAttribute("data-unit-for").replace("measurement", "measurementValue")}"]`,
+				);
+
+				if (
+					measurementInputElement &&
+					measurementInputElement.value &&
+					oldUnit
+				) {
+					const measurementId =
+						measurementDropdownCheckedOptionElement.value;
+					const measurement = dataset.value
+						.measurements()
+						.find((m) => m.id === measurementId);
+
+					if (measurement) {
+						const currentValue = parseFloat(
+							measurementInputElement.value,
+						);
+						const oldConversionFactor =
+							measurement.unit.forSystem[oldUnit]
+								.conversionFactor;
+						const newConversionFactor =
+							measurement.unit.forSystem[preferences.value.unit]
+								.conversionFactor;
+						const newValue =
+							currentValue *
+							(newConversionFactor / oldConversionFactor);
+						measurementInputElement.value = newValue.toFixed(2);
+					}
+				}
 			}
 		});
 };
