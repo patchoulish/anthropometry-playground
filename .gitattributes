@@ -3,5 +3,8 @@
 # npm lock file.
 package-lock.json -diff
 
+# Flake lock file.
+*.lock -diff
+
 # Raw data files.
 *.csv -diff
