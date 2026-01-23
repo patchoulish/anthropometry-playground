@@ -1,5 +1,6 @@
 import { Component } from "../component.js";
 import { MeasurementDropdownComponent } from "./measurement-dropdown.js";
+import { EventName } from "../../events.js";
 
 class MeasurementComponent extends Component {
 	constructor(element) {
@@ -19,18 +20,111 @@ class MeasurementComponent extends Component {
 			"measurement-change",
 			this.onMeasurementChange.bind(this),
 		);
+
+		window.addEventListener(
+			EventName.DATASET_CHANGED,
+			this.onDatasetChanged.bind(this),
+		);
+		window.addEventListener(
+			EventName.UNIT_SYSTEM_CHANGED,
+			this.onUnitSystemChanged.bind(this),
+		);
+
+		this.dataset = null;
+		this.currentUnitSystem = "metric";
 	}
 
 	onMeasurementChange(event) {
-		const { datasetChanged } = event.detail;
+		const { measurementId } = event.detail;
 
-		if (datasetChanged && this.input) {
+		if (this.dataset && this.currentUnitSystem) {
+			const measurement = this.dataset
+				.measurements()
+				.find((m) => m.id === measurementId);
+
+			if (measurement) {
+				const abbrev =
+					measurement.unit.forSystem[this.currentUnitSystem]
+						.abbreviation;
+				this.updateUnitLabel(abbrev);
+			}
+		}
+
+		if (this.input) {
 			this.input.value = "";
 		}
 	}
 
-	update(dataset) {
+	onDatasetChanged(event) {
+		const { dataset, unitSystem } = event.detail;
+		this.update(dataset, unitSystem);
+	}
+
+	onUnitSystemChanged(event) {
+		const { unitSystem, oldUnitSystem } = event.detail;
+		this.currentUnitSystem = unitSystem;
+
+		if (!this.dataset || !this.measurementId) {
+			return;
+		}
+
+		const measurement = this.dataset
+			.measurements()
+			.find((m) => m.id === this.measurementId);
+
+		if (!measurement) {
+			return;
+		}
+
+		// Update label
+		const unitAbbreviation =
+			measurement.unit.forSystem[unitSystem].abbreviation;
+		this.updateUnitLabel(unitAbbreviation);
+
+		// Update value if needed
+		if (this.inputValue && !isNaN(this.inputValue) && oldUnitSystem) {
+			const oldUnitSystemData = measurement.unit.forSystem[oldUnitSystem];
+			const newUnitSystemData = measurement.unit.forSystem[unitSystem];
+
+			if (oldUnitSystemData && newUnitSystemData) {
+				const oldConversionFactor = oldUnitSystemData.conversionFactor;
+				const newConversionFactor = newUnitSystemData.conversionFactor;
+
+				if (
+					oldConversionFactor &&
+					oldConversionFactor !== 0 &&
+					newConversionFactor &&
+					newConversionFactor !== 0
+				) {
+					const newValue =
+						this.inputValue *
+						(newConversionFactor / oldConversionFactor);
+					this.inputValue = newValue.toFixed(2);
+				}
+			}
+		}
+	}
+
+	update(dataset, unitSystem) {
+		this.dataset = dataset;
+		if (unitSystem) {
+			this.currentUnitSystem = unitSystem;
+		}
+
 		this.dropdown.update(dataset);
+
+		if (this.measurementId && this.currentUnitSystem) {
+			const measurement = this.dataset
+				.measurements()
+				.find((m) => m.id === this.measurementId);
+
+			if (measurement) {
+				const abbrev =
+					measurement.unit.forSystem[this.currentUnitSystem]
+						.abbreviation;
+				this.updateUnitLabel(abbrev);
+			}
+		}
 	}
 
 	updateUnitLabel(abbreviation) {

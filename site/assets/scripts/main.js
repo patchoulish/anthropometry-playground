@@ -1,4 +1,11 @@
 import { Series } from "./math.js";
+import {
+	EventName,
+	DatasetChangedEventData,
+	GenderChangedEventData,
+	UnitSystemChangedEventData,
+} from "./events.js";
+import { getThemePreference } from "./theme-toggle.js";
 import { HistogramPlot } from "./plots/histogram-plot.js";
 import { DensityPlot } from "./plots/density-plot.js";
 import { ScatterPlot } from "./plots/scatter-plot.js";
@@ -65,17 +72,35 @@ const initialize = async () => {
 					break;
 				case "genderMale":
 					preferences.setGender("male", target.checked);
-					refreshResults();
+					window.dispatchEvent(
+						new CustomEvent(EventName.GENDER_CHANGED, {
+							detail: new GenderChangedEventData(
+								preferences.genders,
+							),
+						}),
+					);
 					break;
 				case "genderFemale":
 					preferences.setGender("female", target.checked);
-					refreshResults();
+					window.dispatchEvent(
+						new CustomEvent(EventName.GENDER_CHANGED, {
+							detail: new GenderChangedEventData(
+								preferences.genders,
+							),
+						}),
+					);
 					break;
 				case "unit":
 					const oldUnit = preferences.unit;
 					preferences.unit = target.value;
-					handleUnitPreferenceChange(target, oldUnit);
-					refreshResults();
+					window.dispatchEvent(
+						new CustomEvent(EventName.UNIT_SYSTEM_CHANGED, {
+							detail: new UnitSystemChangedEventData(
+								preferences.unit,
+								oldUnit,
+							),
+						}),
+					);
 					break;
 			}
 		});
@@ -96,22 +121,12 @@ const initialize = async () => {
 	);
 
 	document.addEventListener("measurement-change", (event) => {
-		const { measurementId, name } = event.detail;
-
-		// Update units
-		const component = measurementComponents.find((c) => c.name === name);
-		if (component) {
-			const unitAbbreviation =
-				getUnitAbbreviationForMeasurement(measurementId);
-			component.updateUnitLabel(unitAbbreviation);
-		}
-
 		refreshResults();
 	});
 
 	// Initial population
 	measurementComponents.forEach((component) =>
-		component.update(dataset.value),
+		component.update(dataset.value, preferences.unit),
 	);
 
 	// Refresh results when measurement value inputs change.
@@ -183,56 +198,14 @@ const handleDatasetChange = async () => {
 	// Load the new dataset
 	dataset.value = await getDataset();
 
-	// Reload all measurement dropdowns
-	measurementComponents.forEach((component) => {
-		component.update(dataset.value);
-	});
-
-	// Refresh all plots with the new data
-	refreshResults();
-};
-
-const handleUnitPreferenceChange = (target, oldUnit) => {
-	measurementComponents.forEach((component) => {
-		const measurementId = component.measurementId;
-
-		// Update label
-		const unitAbbreviation =
-			getUnitAbbreviationForMeasurement(measurementId);
-		component.updateUnitLabel(unitAbbreviation);
-
-		// Update value if needed
-		const measurement = dataset.value
-			.measurements()
-			.find((m) => m.id === measurementId);
-
-		if (
-			measurement &&
-			component.inputValue &&
-			!isNaN(component.inputValue) &&
-			oldUnit
-		) {
-			const oldUnitSystem = measurement.unit.forSystem[oldUnit];
-			const newUnitSystem = measurement.unit.forSystem[preferences.unit];
-
-			if (oldUnitSystem && newUnitSystem) {
-				const oldConversionFactor = oldUnitSystem.conversionFactor;
-				const newConversionFactor = newUnitSystem.conversionFactor;
-
-				if (
-					oldConversionFactor &&
-					oldConversionFactor !== 0 &&
-					newConversionFactor &&
-					newConversionFactor !== 0
-				) {
-					const newValue =
-						component.inputValue *
-						(newConversionFactor / oldConversionFactor);
-					component.inputValue = newValue.toFixed(2);
-				}
-			}
-		}
-	});
+	window.dispatchEvent(
+		new CustomEvent(EventName.DATASET_CHANGED, {
+			detail: new DatasetChangedEventData(
+				dataset.value,
+				preferences.unit,
+			),
+		}),
+	);
 };
 
 const getUnitAbbreviationForMeasurement = (measurementId) => {
@@ -609,6 +582,7 @@ window.addEventListener(
 		refreshResults();
 	}, 16.67),
 );
-window.addEventListener("themechange", () => {
-	refreshResults();
-});
+window.addEventListener(EventName.THEME_CHANGED, refreshResults);
+window.addEventListener(EventName.DATASET_CHANGED, refreshResults);
+window.addEventListener(EventName.GENDER_CHANGED, refreshResults);
+window.addEventListener(EventName.UNIT_SYSTEM_CHANGED, refreshResults);

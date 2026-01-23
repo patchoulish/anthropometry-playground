@@ -14,11 +14,15 @@
 	limitations under the License.
 */
 
+import { EventName, ThemeChangedEventData } from "./events.js";
+
 const themeStorageKey = "theme-preference";
 
 const notifyThemeChange = (theme) => {
 	window.dispatchEvent(
-		new CustomEvent("themechange", { detail: { theme: theme } }),
+		new CustomEvent(EventName.THEME_CHANGED, {
+			detail: new ThemeChangedEventData(theme),
+		}),
 	);
 };
 
@@ -40,6 +44,8 @@ const getThemePreference = () => {
 			: "light";
 	}
 };
+
+export { getThemePreference };
 
 const setThemePreference = () => {
 	localStorage.setItem(themeStorageKey, theme.value);
@@ -65,7 +71,7 @@ const theme = {
 
 refreshTheme();
 
-window.onload = () => {
+window.addEventListener("load", () => {
 	refreshTheme();
 
 	document
@@ -78,4 +84,4 @@ window.onload = () => {
 			theme.value = isDark ? "dark" : "light";
 			setThemePreference();
 		});
-};
+});
