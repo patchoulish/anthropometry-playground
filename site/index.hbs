@@ -100,17 +100,7 @@ title: "Anthropometry Playground"
         </p>
         <div>
           <label>X-Axis:</label>
-          <details class="dropdown"
-                   name="measurementXHistogram"
-                   data-measurement-dropdown
-                   data-measurement-dropdown-default="stature">
-            <summary>Measurement</summary>
-            <ul>
-              <li>
-                <input type="search" placeholder="Search" aria-label="Search" />
-              </li>
-            </ul>
-          </details>
+          {{> components/controls/measurement-dropdown name="measurementXHistogram" defaultValue="stature" }}
           <fieldset role="group">
             <input type="number"
                    name="measurementValueXHistogram"
@@ -134,17 +124,7 @@ title: "Anthropometry Playground"
         </p>
         <div>
           <label>X-Axis:</label>
-          <details class="dropdown"
-                   name="measurementXScatter"
-                   data-measurement-dropdown
-                   data-measurement-dropdown-default="stature">
-            <summary>Measurement</summary>
-            <ul>
-              <li>
-                <input type="search" placeholder="Search" aria-label="Search" />
-              </li>
-            </ul>
-          </details>
+          {{> components/controls/measurement-dropdown name="measurementXScatter" defaultValue="stature" }}
           <fieldset role="group">
             <input type="number" name="measurementValueXScatter" data-measurement-value />
             <button class="contrast" data-unit-for="measurementXScatter" disabled></button>
@@ -152,17 +132,7 @@ title: "Anthropometry Playground"
         </div>
         <div>
           <label>Y-Axis:</label>
-          <details class="dropdown"
-                   name="measurementYScatter"
-                   data-measurement-dropdown
-                   data-measurement-dropdown-default="weight">
-            <summary>Measurement</summary>
-            <ul>
-              <li>
-                <input type="search" placeholder="Search" aria-label="Search" />
-              </li>
-            </ul>
-          </details>
+          {{> components/controls/measurement-dropdown name="measurementYScatter" defaultValue="weight" }}
           <fieldset role="group">
             <input type="number" name="measurementValueYScatter" data-measurement-value />
             <button class="contrast" data-unit-for="measurementYScatter" disabled></button>
@@ -184,17 +154,7 @@ title: "Anthropometry Playground"
         </p>
         <div>
           <label>X-Axis:</label>
-          <details class="dropdown"
-                   name="measurementXDensity"
-                   data-measurement-dropdown
-                   data-measurement-dropdown-default="stature">
-            <summary>Measurement</summary>
-            <ul>
-              <li>
-                <input type="search" placeholder="Search" aria-label="Search" />
-              </li>
-            </ul>
-          </details>
+          {{> components/controls/measurement-dropdown name="measurementXDensity" defaultValue="stature" }}
           <fieldset role="group">
             <input type="number" name="measurementValueXDensity" data-measurement-value />
             <button class="contrast" data-unit-for="measurementXDensity" disabled></button>
@@ -226,17 +186,7 @@ title: "Anthropometry Playground"
         </p>
         <div>
           <label>X-Axis:</label>
-          <details class="dropdown"
-                   name="measurementXJointDensity"
-                   data-measurement-dropdown
-                   data-measurement-dropdown-default="stature">
-            <summary>Measurement</summary>
-            <ul>
-              <li>
-                <input type="search" placeholder="Search" aria-label="Search" />
-              </li>
-            </ul>
-          </details>
+          {{> components/controls/measurement-dropdown name="measurementXJointDensity" defaultValue="stature" }}
           <fieldset role="group">
             <input type="number"
                    name="measurementValueXJointDensity"
@@ -246,17 +196,7 @@ title: "Anthropometry Playground"
         </div>
         <div>
           <label>Y-Axis:</label>
-          <details class="dropdown"
-                   name="measurementYJointDensity"
-                   data-measurement-dropdown
-                   data-measurement-dropdown-default="weight">
-            <summary>Measurement</summary>
-            <ul>
-              <li>
-                <input type="search" placeholder="Search" aria-label="Search" />
-              </li>
-            </ul>
-          </details>
+          {{> components/controls/measurement-dropdown name="measurementYJointDensity" defaultValue="weight" }}
           <fieldset role="group">
             <input type="number"
                    name="measurementValueYJointDensity"

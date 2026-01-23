@@ -6,6 +6,9 @@ import { JointDensityPlot } from "./plots/joint-density-plot.js";
 import { Dataset } from "./dataset.js";
 import { Gender } from "./model.js";
 import { Preferences } from "./preferences.js";
+import { MeasurementDropdownComponent } from "./components/controls/measurement-dropdown.js";
+
+let measurementDropdownComponents = [];
 
 const getDataset = async () => {
 	const datasetId = preferences.dataset;
@@ -79,7 +82,29 @@ const initialize = async () => {
 	const measurementDropdownElements = document.querySelectorAll(
 		"details[data-measurement-dropdown]",
 	);
-	measurementDropdownElements.forEach(initializeMeasurementDropdown);
+	measurementDropdownComponents = Array.from(measurementDropdownElements).map(
+		(element) => new MeasurementDropdownComponent(element),
+	);
+
+	document.addEventListener("measurement-change", (event) => {
+		const { measurementId, name } = event.detail;
+
+		// Update units
+		const measurementUnitElements = document.querySelectorAll(
+			`button[data-unit-for="${name}"]`,
+		);
+		measurementUnitElements.forEach((element) => {
+			element.textContent =
+				getUnitAbbreviationForMeasurement(measurementId);
+		});
+
+		refreshResults();
+	});
+
+	// Initial population
+	measurementDropdownComponents.forEach((component) =>
+		component.update(dataset.value),
+	);
 
 	// Refresh results when measurement value inputs change.
 	const measurementValueXHistogramElement = document.querySelector(
@@ -139,249 +164,26 @@ const initialize = async () => {
 	refreshResults();
 };
 
-const initializeMeasurementDropdown = (measurementDropdownElement) => {
-	const measurementDropdownElementName =
-		measurementDropdownElement.getAttribute("name");
-
-	if (!measurementDropdownElementName) {
-		return;
-	}
-
-	const list = measurementDropdownElement.querySelector("ul");
-
-	if (!list) {
-		return;
-	}
-
-	// Populate the dropdown with measurement options.
-	const measurements = getMeasurements();
-
-	measurements.forEach((measurement) => {
-		const li = document.createElement("li");
-		const label = document.createElement("label");
-		const input = document.createElement("input");
-
-		input.type = "radio";
-		input.name = measurementDropdownElementName;
-		input.value = measurement.value;
-		if (
-			measurement.value ===
-			measurementDropdownElement.getAttribute(
-				"data-measurement-dropdown-default",
-			)
-		) {
-			input.checked = true;
-		}
-
-		label.append(input, document.createTextNode(`${measurement.label}`));
-		li.appendChild(label);
-		list.appendChild(li);
-	});
-
-	const measurementUnitElements = document.querySelectorAll(
-		`button[data-unit-for="${measurementDropdownElementName}"]`,
-	);
-
-	measurementDropdownElement.addEventListener("input", (event) => {
-		const target = event.target;
-
-		if (target.matches("input[type=search")) {
-			handleMeasurementDropdownSearchInput(
-				target,
-				measurementDropdownElement,
-			);
-		}
-	});
-
-	measurementDropdownElement.addEventListener("change", (event) => {
-		const target = event.target;
-
-		if (target.matches("input[type=radio]")) {
-			handleMeasurementDropdownOptionChange(
-				target,
-				measurementDropdownElement,
-				measurementUnitElements,
-			);
-		}
-	});
-
-	const measurementDropdownCheckedOptionElement =
-		measurementDropdownElement.querySelector("input[type=radio]:checked");
-
-	if (measurementDropdownCheckedOptionElement) {
-		handleMeasurementDropdownOptionChange(
-			measurementDropdownCheckedOptionElement,
-			measurementDropdownElement,
-			measurementUnitElements,
-		);
-	}
-};
-
-const reloadMeasurementDropdown = (measurementDropdownElement) => {
-	const measurementDropdownElementName =
-		measurementDropdownElement.getAttribute("name");
-
-	if (!measurementDropdownElementName) {
-		return;
-	}
-
-	const list = measurementDropdownElement.querySelector("ul");
-
-	if (!list) {
-		return;
-	}
-
-	// Get currently selected measurement before clearing
-	const currentlySelectedElement = measurementDropdownElement.querySelector(
-		"input[type=radio]:checked",
-	);
-	const currentlySelectedValue = currentlySelectedElement?.value;
-
-	// Clear existing measurement options (keep search input)
-	const searchInput = list.querySelector("input[type=search]");
-	list.innerHTML = "";
-	if (searchInput) {
-		const li = document.createElement("li");
-		li.appendChild(searchInput);
-		list.appendChild(li);
-		searchInput.value = ""; // Clear search
-	}
-
-	// Populate the dropdown with new measurement options
-	const measurements = getMeasurements();
-	const defaultValue = measurementDropdownElement.getAttribute(
-		"data-measurement-dropdown-default",
-	);
-
-	let selectedValue = null;
-	// Check if currently selected measurement exists in new dataset
-	const currentExistsInNew =
-		currentlySelectedValue &&
-		measurements.some((m) => m.value === currentlySelectedValue);
-
-	if (currentExistsInNew) {
-		// Keep current selection if it exists in new dataset
-		selectedValue = currentlySelectedValue;
-	} else if (measurements.some((m) => m.value === defaultValue)) {
-		// Fall back to default if it exists
-		selectedValue = defaultValue;
-	} else if (measurements.length > 0) {
-		// Otherwise use first measurement
-		selectedValue = measurements[0].value;
-	}
-
-	measurements.forEach((measurement) => {
-		const li = document.createElement("li");
-		const label = document.createElement("label");
-		const input = document.createElement("input");
-
-		input.type = "radio";
-		input.name = measurementDropdownElementName;
-		input.value = measurement.value;
-
-		if (measurement.value === selectedValue) {
-			input.checked = true;
-		}
-
-		label.append(input, document.createTextNode(`${measurement.label}`));
-		li.appendChild(label);
-		list.appendChild(li);
-	});
-
-	// Update summary and units
-	const measurementUnitElements = document.querySelectorAll(
-		`button[data-unit-for="${measurementDropdownElementName}"]`,
-	);
-
-	const measurementDropdownCheckedOptionElement =
-		measurementDropdownElement.querySelector("input[type=radio]:checked");
-
-	if (measurementDropdownCheckedOptionElement) {
-		handleMeasurementDropdownOptionChange(
-			measurementDropdownCheckedOptionElement,
-			measurementDropdownElement,
-			measurementUnitElements,
-		);
-	} else {
-		// Reset summary if no option selected
-		const summaryElement =
-			measurementDropdownElement.querySelector("summary");
-		if (summaryElement) {
-			summaryElement.textContent = "Measurement";
-		}
-	}
-
-	// Only clear measurement value input if the measurement changed
-	if (!currentExistsInNew) {
-		const inputName = measurementDropdownElementName.replace(
-			"measurement",
-			"measurementValue",
-		);
-		const measurementInputElement = document.querySelector(
-			`input[data-measurement-value][name="${inputName}"]`,
-		);
-		if (measurementInputElement) {
-			measurementInputElement.value = "";
-		}
-	}
-};
-
-const handleMeasurementDropdownSearchInput = (
-	target,
-	measurementDropdownElement,
-) => {
-	const inputText = target.value;
-
-	const optionLabelElements =
-		measurementDropdownElement.querySelectorAll("label");
-
-	if (!optionLabelElements) {
-		return;
-	}
-
-	optionLabelElements.forEach((element) => {
-		if (
-			!element.innerText.toLowerCase().includes(inputText.toLowerCase())
-		) {
-			element.parentElement.setAttribute("hidden", "true");
-		} else {
-			element.parentElement.removeAttribute("hidden");
-		}
-	});
-};
-
-const handleMeasurementDropdownOptionChange = (
-	target,
-	measurementDropdownElement,
-	measurementUnitElements,
-) => {
-	const measurementName = target.value;
-	const measurementLabel = target.parentElement.textContent.trim();
-
-	const summaryElement = measurementDropdownElement.querySelector("summary");
-	if (summaryElement) {
-		summaryElement.textContent = measurementLabel;
-	}
-
-	if (measurementUnitElements) {
-		measurementUnitElements.forEach((element) => {
-			element.textContent =
-				getUnitAbbreviationForMeasurement(measurementName);
-		});
-	}
-
-	refreshResults();
-};
-
 const handleDatasetChange = async () => {
 	// Load the new dataset
 	dataset.value = await getDataset();
 
 	// Reload all measurement dropdowns
-	const measurementDropdownElements = document.querySelectorAll(
-		"details[data-measurement-dropdown]",
-	);
-	measurementDropdownElements.forEach(reloadMeasurementDropdown);
+	measurementDropdownComponents.forEach((component) => {
+		const changed = component.update(dataset.value);
+		if (changed) {
+			const inputName = component.name.replace(
+				"measurement",
+				"measurementValue",
+			);
+			const measurementInputElement = document.querySelector(
+				`input[data-measurement-value][name="${inputName}"]`,
+			);
+			if (measurementInputElement) {
+				measurementInputElement.value = "";
+			}
+		}
+	});
 
 	// Refresh all plots with the new data
 	refreshResults();
@@ -405,11 +207,10 @@ const handleUnitPreferenceChange = (target, oldUnit) => {
 				);
 
 			if (measurementDropdownCheckedOptionElement) {
-				handleMeasurementDropdownOptionChange(
-					measurementDropdownCheckedOptionElement,
-					measurementDropdownElement,
-					[measurementUnitElement],
-				);
+				measurementUnitElement.textContent =
+					getUnitAbbreviationForMeasurement(
+						measurementDropdownCheckedOptionElement.value,
+					);
 
 				// Convert the user input value from old unit to new unit
 				const dropdownName =
@@ -477,15 +278,6 @@ const handleUnitPreferenceChange = (target, oldUnit) => {
 				}
 			}
 		});
-};
-
-const getMeasurements = () => {
-	return dataset.value.measurements().map((measurement) => {
-		return {
-			label: measurement.name,
-			value: measurement.id,
-		};
-	});
 };
 
 const getUnitAbbreviationForMeasurement = (measurementId) => {
