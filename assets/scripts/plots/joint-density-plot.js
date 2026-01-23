@@ -162,7 +162,7 @@ class JointDensityPlot extends Plot {
 			ctx.strokeStyle = color;
 			ctx.globalAlpha = 0.5;
 			ctx.lineWidth = 3;
-			ctx.setLineDash([]); // solid line for 1-sigma
+			ctx.setLineDash([]); // solid line for 3-sigma
 			this.drawConfidenceEllipse(
 				ctx,
 				mx,
@@ -170,7 +170,7 @@ class JointDensityPlot extends Plot {
 				sx,
 				sy,
 				rho,
-				1,
+				3,
 				width,
 				height,
 				bounds,
@@ -197,7 +197,7 @@ class JointDensityPlot extends Plot {
 				sx,
 				sy,
 				rho,
-				3,
+				1,
 				width,
 				height,
 				bounds,
