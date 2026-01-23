@@ -5,9 +5,10 @@ import { ScatterPlot } from "./plots/scatter-plot.js";
 import { JointDensityPlot } from "./plots/joint-density-plot.js";
 import { Dataset } from "./dataset.js";
 import { Gender } from "./model.js";
+import { Preferences } from "./preferences.js";
 
 const getDataset = async () => {
-	const datasetId = preferences.value.dataset;
+	const datasetId = preferences.dataset;
 	const dataset = Dataset.all().find((ds) => ds.id === datasetId);
 
 	if (!dataset) {
@@ -19,50 +20,23 @@ const getDataset = async () => {
 	return dataset;
 };
 
-const preferencesStorageKey = "preferences";
-
-const getPreferences = () => {
-	const storedPreferences = localStorage.getItem(preferencesStorageKey);
-
-	if (storedPreferences) {
-		return JSON.parse(storedPreferences);
-	} else {
-		return {
-			dataset: "ansur2",
-			genders: {
-				male: true,
-				female: true,
-			},
-			unit: "metric",
-		};
-	}
-};
-
-const setPreferences = () => {
-	localStorage.setItem(
-		preferencesStorageKey,
-		JSON.stringify(preferences.value),
-	);
-};
+// Removed old persistence logic
 
 const initialize = async () => {
-	if (!preferences.value.dataset) {
-		// Default to ANSUR II dataset.
-		preferences.value.dataset = "ansur2";
-	}
+	// Defaults are handled in Preferences class now.
 
 	// Set the preference values in the UI.
 	document.querySelector(
-		`details[data-preference-dropdown] input[name='dataset'][value='${preferences.value.dataset}']`,
+		`details[data-preference-dropdown] input[name='dataset'][value='${preferences.dataset}']`,
 	).checked = true;
 	document.querySelector(
 		"details[data-preference-dropdown] input[name='genderMale']",
-	).checked = preferences.value.genders.male;
+	).checked = preferences.genders.male;
 	document.querySelector(
 		"details[data-preference-dropdown] input[name='genderFemale']",
-	).checked = preferences.value.genders.female;
+	).checked = preferences.genders.female;
 	document.querySelector(
-		`details[data-preference-dropdown] input[name='unit'][value='${preferences.value.unit}']`,
+		`details[data-preference-dropdown] input[name='unit'][value='${preferences.unit}']`,
 	).checked = true;
 
 	// Load the dataset.
@@ -81,24 +55,20 @@ const initialize = async () => {
 
 			switch (target.name) {
 				case "dataset":
-					preferences.value.dataset = target.value;
-					setPreferences();
+					preferences.dataset = target.value;
 					handleDatasetChange();
 					break;
 				case "genderMale":
-					preferences.value.genders.male = target.checked;
-					setPreferences();
+					preferences.setGender("male", target.checked);
 					refreshResults();
 					break;
 				case "genderFemale":
-					preferences.value.genders.female = target.checked;
-					setPreferences();
+					preferences.setGender("female", target.checked);
 					refreshResults();
 					break;
 				case "unit":
-					const oldUnit = preferences.value.unit;
-					preferences.value.unit = target.value;
-					setPreferences();
+					const oldUnit = preferences.unit;
+					preferences.unit = target.value;
 					handleUnitPreferenceChange(target, oldUnit);
 					refreshResults();
 					break;
@@ -463,7 +433,7 @@ const handleUnitPreferenceChange = (target, oldUnit) => {
 						const oldUnitSystem =
 							measurement.unit.forSystem[oldUnit];
 						const newUnitSystem =
-							measurement.unit.forSystem[preferences.value.unit];
+							measurement.unit.forSystem[preferences.unit];
 
 						// Validate that both unit systems exist
 						if (!oldUnitSystem || !newUnitSystem) {
@@ -511,7 +481,7 @@ const getUnitAbbreviationForMeasurement = (measurementId) => {
 	if (!measurement) {
 		return "";
 	}
-	return measurement.unit.forSystem[preferences.value.unit].abbreviation;
+	return measurement.unit.forSystem[preferences.unit].abbreviation;
 };
 
 const resizeCanvasToContainer = (canvas) => {
@@ -540,7 +510,7 @@ const convertValuesForDisplay = (values, measurementId) => {
 		.find((m) => m.id === measurementId);
 
 	return values.map((v) =>
-		measurement.unit.convertTo(v, { id: preferences.value.unit }),
+		measurement.unit.convertTo(v, { id: preferences.unit }),
 	);
 };
 
@@ -549,7 +519,7 @@ const buildSeries = (measurementX) => {
 	const seriesLabels = [];
 	const seriesColors = [];
 
-	if (preferences.value.genders.male) {
+	if (preferences.genders.male) {
 		series.push(
 			new Series({
 				x: convertValuesForDisplay(
@@ -562,7 +532,7 @@ const buildSeries = (measurementX) => {
 		seriesColors.push("#2563eb");
 	}
 
-	if (preferences.value.genders.female) {
+	if (preferences.genders.female) {
 		series.push(
 			new Series({
 				x: convertValuesForDisplay(
@@ -587,7 +557,7 @@ const buildJointSeries = (measurementX, measurementY) => {
 	const seriesLabels = [];
 	const seriesColors = [];
 
-	if (preferences.value.genders.male) {
+	if (preferences.genders.male) {
 		series.push(
 			new Series({
 				x: convertValuesForDisplay(
@@ -607,7 +577,7 @@ const buildJointSeries = (measurementX, measurementY) => {
 		seriesColors.push("#2563eb");
 	}
 
-	if (preferences.value.genders.female) {
+	if (preferences.genders.female) {
 		series.push(
 			new Series({
 				x: convertValuesForDisplay(
@@ -852,9 +822,7 @@ const refreshResults = () => {
 	refreshJointDensityPlot();
 };
 
-const preferences = {
-	value: getPreferences(),
-};
+const preferences = new Preferences();
 
 const dataset = {
 	value: null,
