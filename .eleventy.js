@@ -53,8 +53,6 @@ export default async function (eleventyConfig) {
 		useLayouts: false,
 
 		compile: async function (inputContent, inputPath) {
-			let parsedPath = path.parse(inputPath);
-
 			let result = csvToJson
 				.fieldDelimiter(",")
 				.trimHeaderFieldWhiteSpace(true)

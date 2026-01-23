@@ -136,9 +136,6 @@ class JointDensityPlot extends Plot {
 		const top = this.padding.top;
 		const bottom = height - this.padding.bottom;
 
-		const plotWidth = right - left;
-		const plotHeight = bottom - top;
-
 		// Draw contours for each series (1, 2, 3 standard deviations)
 		for (let i = 0; i < this.series.length; i++) {
 			const s = this.series[i];
