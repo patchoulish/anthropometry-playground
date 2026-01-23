@@ -18,6 +18,10 @@ import { EventName, ThemeChangedEventData } from "./events.js";
 
 const themeStorageKey = "theme-preference";
 
+/**
+ * Dispatches a global event when the theme changes.
+ * @param {string} theme - The new theme ('light' or 'dark').
+ */
 const notifyThemeChange = (theme) => {
 	window.dispatchEvent(
 		new CustomEvent(EventName.THEME_CHANGED, {
@@ -26,6 +30,10 @@ const notifyThemeChange = (theme) => {
 	);
 };
 
+/**
+ * Handles the click event on the theme toggle button.
+ * Toggles the theme state and persists it.
+ */
 const onThemeToggleClick = () => {
 	// Toggle between light and dark themes.
 	theme.value = theme.value === "light" ? "dark" : "light";
@@ -33,6 +41,10 @@ const onThemeToggleClick = () => {
 	setThemePreference();
 };
 
+/**
+ * Retrieves the preferred theme from local storage or system preferences.
+ * @returns {string} The preferred theme ('light' or 'dark').
+ */
 const getThemePreference = () => {
 	var themeStorageValue = localStorage.getItem(themeStorageKey);
 
@@ -47,6 +59,9 @@ const getThemePreference = () => {
 
 export { getThemePreference };
 
+/**
+ * Persists the current theme to local storage and updates the UI.
+ */
 const setThemePreference = () => {
 	localStorage.setItem(themeStorageKey, theme.value);
 
@@ -54,6 +69,9 @@ const setThemePreference = () => {
 	notifyThemeChange(theme.value);
 };
 
+/**
+ * Updates the document attributes and toggle button state to match the current theme.
+ */
 const refreshTheme = () => {
 	document.firstElementChild.setAttribute("data-theme", theme.value);
 

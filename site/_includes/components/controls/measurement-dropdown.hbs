@@ -1,3 +1,14 @@
+{{!--
+Measurement Dropdown Component
+A searchable dropdown list used to select a measurement type from the dataset.
+This component is typically instantiated as part of the `measurement` control.
+Parameters:
+- name: The name attribute for the dropdown.
+- defaultValue: The ID of the measurement selected by default.
+Behavior:
+- Javascript populates the <ul> with radio buttons for each measurement.
+- Search input filters the visibility of these items.
+--}}
 <details class="dropdown"
          name="{{ name }}"
          data-measurement-dropdown

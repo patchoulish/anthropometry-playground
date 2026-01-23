@@ -1,3 +1,12 @@
+{{!--
+Measurement Control Component
+Composite control that includes a dropdown for selecting a measurement type
+and an input field for entering a value, along with a dynamic unit display.
+Parameters:
+- name: The name attribute for the control (used for event handling and form submission).
+- valueName: The name attribute for the value input field.
+- defaultValue: The default selected measurement ID.
+--}}
 <div data-measurement-control name="{{ name }}">
   {{> components/controls/measurement-dropdown name=name defaultValue=defaultValue }}
   <fieldset role="group">

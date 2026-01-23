@@ -45,6 +45,12 @@ class DensityPlot extends Plot {
 	 * @param {number} width - The logical width of the canvas.
 	 * @param {number} height - The logical height of the canvas.
 	 */
+	/**
+	 * Renders the density plot.
+	 * @param {CanvasRenderingContext2D} ctx - The drawing context.
+	 * @param {number} width - The logical width of the canvas.
+	 * @param {number} height - The logical height of the canvas.
+	 */
 	handleRender(ctx, width, height) {
 		const bounds = this.calculateBounds();
 

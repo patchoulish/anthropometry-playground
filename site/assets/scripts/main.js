@@ -6,6 +6,7 @@ import {
 	UnitSystemChangedEventData,
 } from "./events.js";
 import { getThemePreference } from "./theme-toggle.js";
+// Plot implementations
 import { HistogramPlot } from "./plots/histogram-plot.js";
 import { DensityPlot } from "./plots/density-plot.js";
 import { ScatterPlot } from "./plots/scatter-plot.js";
@@ -13,12 +14,21 @@ import { JointDensityPlot } from "./plots/joint-density-plot.js";
 import { Dataset } from "./dataset.js";
 import { Gender } from "./model.js";
 import { Preferences } from "./preferences.js";
+// UI Components
 import { MeasurementComponent } from "./components/controls/measurement.js";
 import { SwitchComponent } from "./components/controls/switch.js";
 
+/** @type {MeasurementComponent[]} List of measurement control components */
 let measurementComponents = [];
+/** @type {SwitchComponent[]} List of switch components */
 let switchComponents = [];
 
+/**
+ * Retrieves the currently selected dataset based on preferences.
+ * Fetches the data if it hasn't been loaded yet.
+ * @returns {Promise<Dataset>} The loaded dataset.
+ * @throws {Error} If the dataset ID in preferences is invalid.
+ */
 const getDataset = async () => {
 	const datasetId = preferences.dataset;
 	const dataset = Dataset.all().find((ds) => ds.id === datasetId);
@@ -34,10 +44,14 @@ const getDataset = async () => {
 
 // Removed old persistence logic
 
+/**
+ * Initializes the application.
+ * Sets up initial state, event listeners, and default values.
+ */
 const initialize = async () => {
 	// Defaults are handled in Preferences class now.
 
-	// Set the preference values in the UI.
+	// Sync UI state with stored preferences
 	document.querySelector(
 		`details[data-preference-dropdown] input[name='dataset'][value='${preferences.dataset}']`,
 	).checked = true;
@@ -51,9 +65,10 @@ const initialize = async () => {
 		`details[data-preference-dropdown] input[name='unit'][value='${preferences.unit}']`,
 	).checked = true;
 
-	// Load the dataset.
+	// Load the initial dataset.
 	dataset.value = await getDataset();
 
+	// Set up preference dropdown interactions
 	const preferenceDropdownElements = document.querySelectorAll(
 		"details[data-preference-dropdown]",
 	);
@@ -65,6 +80,7 @@ const initialize = async () => {
 				return;
 			}
 
+			// Handle preference changes based on the input name
 			switch (target.name) {
 				case "dataset":
 					preferences.dataset = target.value;
@@ -72,6 +88,7 @@ const initialize = async () => {
 					break;
 				case "genderMale":
 					preferences.setGender("male", target.checked);
+					// Notify app of gender preference change
 					window.dispatchEvent(
 						new CustomEvent(EventName.GENDER_CHANGED, {
 							detail: new GenderChangedEventData(
@@ -93,6 +110,7 @@ const initialize = async () => {
 				case "unit":
 					const oldUnit = preferences.unit;
 					preferences.unit = target.value;
+					// Notify app of unit system change (triggers conversion)
 					window.dispatchEvent(
 						new CustomEvent(EventName.UNIT_SYSTEM_CHANGED, {
 							detail: new UnitSystemChangedEventData(

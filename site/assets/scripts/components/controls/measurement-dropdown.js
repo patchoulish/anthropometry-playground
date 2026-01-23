@@ -1,6 +1,15 @@
 import { Component } from "../component.js";
 
+/**
+ * Component for a dropdown list of measurements, including search functionality.
+ * Controls the visibility of measurement options based on user input and handles selection events.
+ * @extends Component
+ */
 class MeasurementDropdownComponent extends Component {
+	/**
+	 * Creates a new MeasurementDropdownComponent.
+	 * @param {HTMLElement} element - The root element of the dropdown.
+	 */
 	constructor(element) {
 		super(element);
 		this.list = this.element.querySelector("ul");
@@ -11,6 +20,7 @@ class MeasurementDropdownComponent extends Component {
 			"data-measurement-dropdown-default",
 		);
 
+		// Attach search event listener if the input exists
 		if (this.searchInput) {
 			this.searchInput.addEventListener(
 				"input",
@@ -18,14 +28,21 @@ class MeasurementDropdownComponent extends Component {
 			);
 		}
 
+		// Listen for changes on the radio buttons within the dropdown
 		this.element.addEventListener("change", this.onChange.bind(this));
 	}
 
+	/**
+	 * Handles input events on the search field.
+	 * Filters the measurement options based on the search text.
+	 * @param {Event} event - The input event.
+	 */
 	onSearch(event) {
 		const inputText = event.target.value;
 		const optionLabelElements = this.element.querySelectorAll("label");
 
 		optionLabelElements.forEach((element) => {
+			// Case-insensitive inclusion search
 			if (
 				!element.innerText
 					.toLowerCase()
@@ -38,7 +55,13 @@ class MeasurementDropdownComponent extends Component {
 		});
 	}
 
+	/**
+	 * Handles change events on the measurement radio buttons.
+	 * Updates the summary text and dispatches a 'measurement-change' event.
+	 * @param {Event} event - The change event.
+	 */
 	onChange(event) {
+		// Only interested in radio button changes
 		if (!event.target.matches("input[type=radio]")) {
 			return;
 		}
@@ -48,6 +71,7 @@ class MeasurementDropdownComponent extends Component {
 
 		this.updateSummary(measurementLabel);
 
+		// Notify parent components about the selection change
 		this.element.dispatchEvent(
 			new CustomEvent("measurement-change", {
 				bubbles: true,
@@ -59,12 +83,21 @@ class MeasurementDropdownComponent extends Component {
 		);
 	}
 
+	/**
+	 * Updates the dropdown summary text (the visible button label).
+	 * @param {string} label - The new label text.
+	 */
 	updateSummary(label) {
 		if (this.summary) {
 			this.summary.textContent = label;
 		}
 	}
 
+	/**
+	 * Updates the dropdown with a new set of measurements from a dataset.
+	 * Preserves the current selection if it exists in the new dataset.
+	 * @param {import("../../dataset.js").Dataset} dataset - The new dataset.
+	 */
 	update(dataset) {
 		const formattedMeasurements = dataset
 			.measurements()
@@ -81,7 +114,7 @@ class MeasurementDropdownComponent extends Component {
 		);
 		const currentlySelectedValue = currentlySelectedElement?.value;
 
-		// Clear existing measurement options (keep search input)
+		// Clear existing measurement options (but keep search input structure)
 		this.list.innerHTML = "";
 		if (this.searchInput) {
 			const li = document.createElement("li");
@@ -91,6 +124,7 @@ class MeasurementDropdownComponent extends Component {
 		}
 
 		let selectedValue = null;
+		// Check if the previously selected value exists in the new measurement list
 		const currentExistsInNew =
 			currentlySelectedValue &&
 			formattedMeasurements.some(
