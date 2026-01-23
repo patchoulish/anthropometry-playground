@@ -40,7 +40,7 @@ jobs:
           name: build-artifacts
           path: ${{ github.workspace }}/_site
   check-for-secrets:
-    name: Gitleaks Scan
+    name: Scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -52,25 +52,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   codeql-analysis:
-    name: CodeQL Analysis
+    name: Analyze
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       security-events: write
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ["javascript-typescript"]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: ${{ matrix.language }}
+          languages: javascript-typescript
           config-file: ./.github/codeql/codeql-config.yml
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:${{matrix.language}}"
