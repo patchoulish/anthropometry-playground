@@ -1,0 +1,11 @@
+name: "CodeQL"
+
+disable-default-queries: false
+
+queries:
+  - uses: security-and-quality
+
+paths-ignore:
+  - "**/node_modules/**"
+  - "**/dist/**"
+  - "_site/**"
