@@ -39,6 +39,18 @@ jobs:
         with:
           name: build-artifacts
           path: ${{ github.workspace }}/_site
+  check-for-secrets:
+    name: Gitleaks Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   codeql-analysis:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
