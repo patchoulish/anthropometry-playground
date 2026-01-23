@@ -1,27 +1,32 @@
-import { Series } from "./math.js";
 import {
 	EventName,
 	DatasetChangedEventData,
 	GenderChangedEventData,
 	UnitSystemChangedEventData,
 } from "./events.js";
-import { getThemePreference } from "./theme-toggle.js";
-// Plot implementations
-import { HistogramPlot } from "./plots/histogram-plot.js";
-import { DensityPlot } from "./plots/density-plot.js";
-import { ScatterPlot } from "./plots/scatter-plot.js";
-import { JointDensityPlot } from "./plots/joint-density-plot.js";
 import { Dataset } from "./dataset.js";
-import { Gender } from "./model.js";
 import { Preferences } from "./preferences.js";
+
 // UI Components
 import { MeasurementComponent } from "./components/controls/measurement.js";
 import { SwitchComponent } from "./components/controls/switch.js";
+import { HistogramPlotComponent } from "./components/plots/histogram-plot-component.js";
+import { DensityPlotComponent } from "./components/plots/density-plot-component.js";
+import { ScatterPlotComponent } from "./components/plots/scatter-plot-component.js";
+import { JointDensityPlotComponent } from "./components/plots/joint-density-plot-component.js";
 
 /** @type {MeasurementComponent[]} List of measurement control components */
 let measurementComponents = [];
 /** @type {SwitchComponent[]} List of switch components */
 let switchComponents = [];
+/** @type {import("./components/plots/plot-component.js").PlotComponent[]} */
+let plotComponents = [];
+
+const preferences = new Preferences();
+
+const dataset = {
+	value: null,
+};
 
 /**
  * Retrieves the currently selected dataset based on preferences.
@@ -42,15 +47,49 @@ const getDataset = async () => {
 	return dataset;
 };
 
-// Removed old persistence logic
+// Debounce utility function to limit how often a function is called
+const debounce = (func, delay) => {
+	let timeoutId;
+	return (...args) => {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => func(...args), delay);
+	};
+};
+
+const refreshResults = () => {
+	if (!dataset.value) return;
+
+	plotComponents.forEach((component) => {
+		component.render(dataset.value, preferences);
+	});
+};
+
+const refreshResultsDebounced = debounce(refreshResults, 16.67);
+
+const handleDatasetChange = async () => {
+	// Load the new dataset
+	dataset.value = await getDataset();
+
+	// Update components
+	measurementComponents.forEach((component) =>
+		component.update(dataset.value, preferences.unit),
+	);
+
+	window.dispatchEvent(
+		new CustomEvent(EventName.DATASET_CHANGED, {
+			detail: new DatasetChangedEventData(
+				dataset.value,
+				preferences.unit,
+			),
+		}),
+	);
+};
 
 /**
  * Initializes the application.
  * Sets up initial state, event listeners, and default values.
  */
 const initialize = async () => {
-	// Defaults are handled in Preferences class now.
-
 	// Sync UI state with stored preferences
 	document.querySelector(
 		`details[data-preference-dropdown] input[name='dataset'][value='${preferences.dataset}']`,
@@ -138,468 +177,69 @@ const initialize = async () => {
 		(element) => new SwitchComponent(element),
 	);
 
-	document.addEventListener("measurement-change", (event) => {
+	// Initialize Plot Components
+	plotComponents = [
+		new HistogramPlotComponent(document.getElementById("histogram-plot"), {
+			measurementXName: "measurementXHistogram",
+			measurementValueXName: "measurementValueXHistogram",
+		}),
+		new ScatterPlotComponent(document.getElementById("scatter-plot"), {
+			measurementXName: "measurementXScatter",
+			measurementYName: "measurementYScatter",
+			measurementValueXName: "measurementValueXScatter",
+			measurementValueYName: "measurementValueYScatter",
+		}),
+		new DensityPlotComponent(document.getElementById("density-plot"), {
+			measurementXName: "measurementXDensity",
+			measurementValueXName: "measurementValueXDensity",
+			sigmaToggleName: "densitySigmaToggle",
+		}),
+		new JointDensityPlotComponent(
+			document.getElementById("joint-density-plot"),
+			{
+				measurementXName: "measurementXJointDensity",
+				measurementYName: "measurementYJointDensity",
+				measurementValueXName: "measurementValueXJointDensity",
+				measurementValueYName: "measurementValueYJointDensity",
+				sigmaToggleName: "jointDensitySigmaToggle",
+			},
+		),
+	];
+
+	document.addEventListener("measurement-change", () => {
 		refreshResults();
 	});
 
-	// Initial population
+	// Initial population of measurement controls
 	measurementComponents.forEach((component) =>
 		component.update(dataset.value, preferences.unit),
 	);
 
-	// Refresh results when measurement value inputs change.
-	const measurementValueXHistogramElement = document.querySelector(
-		"input[name='measurementValueXHistogram']",
-	);
-	measurementValueXHistogramElement.addEventListener("input", () => {
-		refreshHistogramPlot();
+	// Listen for input changes that should trigger plot updates (values, toggles)
+	document.addEventListener("input", (e) => {
+		if (
+			e.target.matches("input") &&
+			(e.target.name.includes("measurementValue") ||
+				e.target.name.includes("Toggle"))
+		) {
+			refreshResultsDebounced();
+		}
 	});
 
-	const measurementValueXScatterElement = document.querySelector(
-		"input[name='measurementValueXScatter']",
-	);
-	measurementValueXScatterElement.addEventListener("input", () => {
-		refreshScatterPlot();
+	document.addEventListener("change", (e) => {
+		if (
+			e.target.matches("input[type=checkbox]") &&
+			e.target.name.includes("Toggle")
+		) {
+			refreshResultsDebounced();
+		}
 	});
-	const measurementValueYScatterElement = document.querySelector(
-		"input[name='measurementValueYScatter']",
-	);
-	measurementValueYScatterElement.addEventListener("input", () => {
-		refreshScatterPlot();
-	});
-
-	const measurementValueXDElement = document.querySelector(
-		"input[name='measurementValueXDensity']",
-	);
-	measurementValueXDElement.addEventListener("input", () => {
-		refreshDensityPlot();
-	});
-
-	const measurementValueXJointDensityElement = document.querySelector(
-		"input[name='measurementValueXJointDensity']",
-	);
-	measurementValueXJointDensityElement.addEventListener("input", () => {
-		refreshJointDensityPlot();
-	});
-	const measurementValueYJointDensityElement = document.querySelector(
-		"input[name='measurementValueYJointDensity']",
-	);
-	measurementValueYJointDensityElement.addEventListener("input", () => {
-		refreshJointDensityPlot();
-	});
-
-	const densitySigmaToggleComponent = switchComponents.find(
-		(c) => c.name === "densitySigmaToggle",
-	);
-	if (densitySigmaToggleComponent) {
-		densitySigmaToggleComponent.element.addEventListener("change", () => {
-			refreshDensityPlot();
-		});
-	}
-
-	const jointDensitySigmaToggleComponent = switchComponents.find(
-		(c) => c.name === "jointDensitySigmaToggle",
-	);
-	if (jointDensitySigmaToggleComponent) {
-		jointDensitySigmaToggleComponent.element.addEventListener(
-			"change",
-			() => {
-				refreshJointDensityPlot();
-			},
-		);
-	}
 
 	refreshResults();
 };
 
-const handleDatasetChange = async () => {
-	// Load the new dataset
-	dataset.value = await getDataset();
-
-	window.dispatchEvent(
-		new CustomEvent(EventName.DATASET_CHANGED, {
-			detail: new DatasetChangedEventData(
-				dataset.value,
-				preferences.unit,
-			),
-		}),
-	);
-};
-
-const getUnitAbbreviationForMeasurement = (measurementId) => {
-	const measurement = dataset.value
-		.measurements()
-		.find((m) => m.id === measurementId);
-	if (!measurement) {
-		return "";
-	}
-	return measurement.unit.forSystem[preferences.unit].abbreviation;
-};
-
-const resizeCanvasToContainer = (canvas) => {
-	if (!canvas) return;
-
-	const dpr = window.devicePixelRatio || 1;
-
-	// Use offsetWidth/offsetHeight to get the current rendered size
-	// This forces a layout recalculation and gives us accurate dimensions
-	const width = canvas.offsetWidth;
-	const height = canvas.offsetHeight;
-
-	// If dimensions are 0, the canvas may not be rendered yet
-	if (width === 0 || height === 0) return;
-
-	canvas.width = Math.floor(width * dpr);
-	canvas.height = Math.floor(height * dpr);
-
-	const ctx = canvas.getContext("2d");
-	ctx.scale(dpr, dpr);
-};
-
-const convertValuesForDisplay = (values, measurementId) => {
-	const measurement = dataset.value
-		.measurements()
-		.find((m) => m.id === measurementId);
-
-	return values.map((v) =>
-		measurement.unit.convertTo(v, { id: preferences.unit }),
-	);
-};
-
-const buildSeries = (measurementX) => {
-	const series = [];
-	const seriesLabels = [];
-	const seriesColors = [];
-
-	if (preferences.genders.male) {
-		series.push(
-			new Series({
-				x: convertValuesForDisplay(
-					measurementX.valuesFor(Gender.MALE),
-					measurementX.id,
-				),
-			}),
-		);
-		seriesLabels.push("Male");
-		seriesColors.push("#2563eb");
-	}
-
-	if (preferences.genders.female) {
-		series.push(
-			new Series({
-				x: convertValuesForDisplay(
-					measurementX.valuesFor(Gender.FEMALE),
-					measurementX.id,
-				),
-			}),
-		);
-		seriesLabels.push("Female");
-		seriesColors.push("#db2777");
-	}
-
-	return {
-		series: series,
-		seriesLabels: seriesLabels,
-		seriesColors: seriesColors,
-	};
-};
-
-const buildJointSeries = (measurementX, measurementY) => {
-	const series = [];
-	const seriesLabels = [];
-	const seriesColors = [];
-
-	if (preferences.genders.male) {
-		series.push(
-			new Series({
-				x: convertValuesForDisplay(
-					measurementX.valuesFor(Gender.MALE),
-					measurementX.id,
-				),
-				y:
-					measurementY === null
-						? []
-						: convertValuesForDisplay(
-								measurementY.valuesFor(Gender.MALE),
-								measurementY.id,
-							),
-			}),
-		);
-		seriesLabels.push("Male");
-		seriesColors.push("#2563eb");
-	}
-
-	if (preferences.genders.female) {
-		series.push(
-			new Series({
-				x: convertValuesForDisplay(
-					measurementX.valuesFor(Gender.FEMALE),
-					measurementX.id,
-				),
-				y:
-					measurementY === null
-						? []
-						: convertValuesForDisplay(
-								measurementY.valuesFor(Gender.FEMALE),
-								measurementY.id,
-							),
-			}),
-		);
-		seriesLabels.push("Female");
-		seriesColors.push("#db2777");
-	}
-
-	return {
-		series: series,
-		seriesLabels: seriesLabels,
-		seriesColors: seriesColors,
-	};
-};
-
-const refreshHistogramPlot = () => {
-	const measurementX = dataset.value
-		.measurements()
-		.find(
-			(m) =>
-				m.id ===
-				(document.querySelector(
-					"details[data-measurement-dropdown][name='measurementXHistogram'] input[type=radio]:checked",
-				)?.value ?? "stature"),
-		);
-
-	// If measurement doesn't exist, skip rendering
-	if (!measurementX) {
-		return;
-	}
-
-	const canvas = document.getElementById("histogram-plot");
-	resizeCanvasToContainer(canvas);
-
-	const series = buildSeries(measurementX);
-	const plot = new HistogramPlot(
-		series.series,
-		series.seriesColors,
-		series.seriesLabels,
-		3,
-		{
-			x: document.querySelector(
-				"input[name='measurementValueXHistogram']",
-			).value
-				? parseFloat(
-						document.querySelector(
-							"input[name='measurementValueXHistogram']",
-						).value,
-					)
-				: undefined,
-		},
-		32,
-		{ top: 20, right: 20, bottom: 40, left: 50 },
-		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
-		getThemePreference() === "dark",
-	);
-
-	plot.render(canvas);
-};
-
-const refreshScatterPlot = () => {
-	const measurementX = dataset.value
-		.measurements()
-		.find(
-			(m) =>
-				m.id ===
-				(document.querySelector(
-					"details[data-measurement-dropdown][name='measurementXScatter'] input[type=radio]:checked",
-				)?.value ?? "stature"),
-		);
-	const measurementY = dataset.value
-		.measurements()
-		.find(
-			(m) =>
-				m.id ===
-				(document.querySelector(
-					"details[data-measurement-dropdown][name='measurementYScatter'] input[type=radio]:checked",
-				)?.value ?? "weightkg"),
-		);
-
-	// If measurements don't exist, skip rendering
-	if (!measurementX || !measurementY) {
-		return;
-	}
-
-	const canvas = document.getElementById("scatter-plot");
-	resizeCanvasToContainer(canvas);
-
-	const series = buildJointSeries(measurementX, measurementY);
-	const plot = new ScatterPlot(
-		series.series,
-		series.seriesColors,
-		series.seriesLabels,
-		3,
-		{
-			x: document.querySelector("input[name='measurementValueXScatter']")
-				.value
-				? parseFloat(
-						document.querySelector(
-							"input[name='measurementValueXScatter']",
-						).value,
-					)
-				: undefined,
-			y: document.querySelector("input[name='measurementValueYScatter']")
-				.value
-				? parseFloat(
-						document.querySelector(
-							"input[name='measurementValueYScatter']",
-						).value,
-					)
-				: undefined,
-		},
-		{ top: 20, right: 20, bottom: 40, left: 50 },
-		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
-		`${measurementY.name} (${getUnitAbbreviationForMeasurement(measurementY.id)})`,
-		getThemePreference() === "dark",
-	);
-
-	plot.render(canvas);
-};
-
-const refreshDensityPlot = () => {
-	const measurementX = dataset.value
-		.measurements()
-		.find(
-			(m) =>
-				m.id ===
-				(document.querySelector(
-					"details[data-measurement-dropdown][name='measurementXDensity'] input[type=radio]:checked",
-				)?.value ?? "stature"),
-		);
-
-	// If measurement doesn't exist, skip rendering
-	if (!measurementX) {
-		return;
-	}
-
-	const canvas = document.getElementById("density-plot");
-	resizeCanvasToContainer(canvas);
-
-	const series = buildSeries(measurementX);
-	const plot = new DensityPlot(
-		series.series,
-		series.seriesColors,
-		series.seriesLabels,
-		3,
-		{
-			x: document.querySelector("input[name='measurementValueXDensity']")
-				.value
-				? parseFloat(
-						document.querySelector(
-							"input[name='measurementValueXDensity']",
-						).value,
-					)
-				: undefined,
-		},
-		{ top: 20, right: 20, bottom: 40, left: 50 },
-		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
-		getThemePreference() === "dark",
-		switchComponents.find((c) => c.name === "densitySigmaToggle")
-			?.checked ?? true,
-	);
-
-	plot.render(canvas);
-};
-
-const refreshJointDensityPlot = () => {
-	const measurementX = dataset.value
-		.measurements()
-		.find(
-			(m) =>
-				m.id ===
-				(document.querySelector(
-					"details[data-measurement-dropdown][name='measurementXJointDensity'] input[type=radio]:checked",
-				)?.value ?? "stature"),
-		);
-	const measurementY = dataset.value
-		.measurements()
-		.find(
-			(m) =>
-				m.id ===
-				(document.querySelector(
-					"details[data-measurement-dropdown][name='measurementYJointDensity'] input[type=radio]:checked",
-				)?.value ?? "weightkg"),
-		);
-
-	// If measurements don't exist, skip rendering
-	if (!measurementX || !measurementY) {
-		return;
-	}
-
-	const canvas = document.getElementById("joint-density-plot");
-	resizeCanvasToContainer(canvas);
-
-	const series = buildJointSeries(measurementX, measurementY);
-	const plot = new JointDensityPlot(
-		series.series,
-		series.seriesColors,
-		series.seriesLabels,
-		{
-			x: document.querySelector(
-				"input[name='measurementValueXJointDensity']",
-			).value
-				? parseFloat(
-						document.querySelector(
-							"input[name='measurementValueXJointDensity']",
-						).value,
-					)
-				: undefined,
-			y: document.querySelector(
-				"input[name='measurementValueYJointDensity']",
-			).value
-				? parseFloat(
-						document.querySelector(
-							"input[name='measurementValueYJointDensity']",
-						).value,
-					)
-				: undefined,
-		},
-		{ top: 20, right: 20, bottom: 40, left: 50 },
-		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
-		`${measurementY.name} (${getUnitAbbreviationForMeasurement(measurementY.id)})`,
-		getThemePreference() === "dark",
-		switchComponents.find((c) => c.name === "jointDensitySigmaToggle")
-			?.checked ?? true,
-	);
-
-	plot.render(canvas);
-};
-
-const refreshResults = () => {
-	refreshHistogramPlot();
-	refreshScatterPlot();
-	refreshDensityPlot();
-	refreshJointDensityPlot();
-};
-
-const preferences = new Preferences();
-
-const dataset = {
-	value: null,
-};
-
-// Debounce utility function to limit how often a function is called
-const debounce = (func, delay) => {
-	let timeoutId;
-	return (...args) => {
-		clearTimeout(timeoutId);
-		timeoutId = setTimeout(() => func(...args), delay);
-	};
-};
-
 window.addEventListener("DOMContentLoaded", initialize);
-window.addEventListener(
-	"resize",
-	debounce(() => {
-		refreshResults();
-	}, 16.67),
-);
+window.addEventListener("resize", refreshResultsDebounced);
 window.addEventListener(EventName.THEME_CHANGED, refreshResults);
 window.addEventListener(EventName.DATASET_CHANGED, refreshResults);
 window.addEventListener(EventName.GENDER_CHANGED, refreshResults);
