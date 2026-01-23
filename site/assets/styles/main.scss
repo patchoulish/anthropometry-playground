@@ -128,3 +128,8 @@ hr {
 	margin-left: -1rem;
 	margin-right: -1rem;
 }
+
+// Last detail in article, when collapsed, should not have a bottom margin.
+article > details:last-of-type:not([open]) {
+	margin-bottom: 0rem;
+}
