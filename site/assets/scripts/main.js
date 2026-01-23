@@ -122,6 +122,20 @@ const initialize = async () => {
 		refreshJointDensityPlot();
 	});
 
+	const densitySigmaToggleElement = document.querySelector(
+		"input[name='densitySigmaToggle']",
+	);
+	densitySigmaToggleElement.addEventListener("change", () => {
+		refreshDensityPlot();
+	});
+
+	const jointDensitySigmaToggleElement = document.querySelector(
+		"input[name='jointDensitySigmaToggle']",
+	);
+	jointDensitySigmaToggleElement.addEventListener("change", () => {
+		refreshJointDensityPlot();
+	});
+
 	refreshResults();
 };
 
@@ -748,6 +762,8 @@ const refreshDensityPlot = () => {
 		{ top: 20, right: 20, bottom: 40, left: 50 },
 		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
 		getThemePreference() === "dark",
+		document.querySelector("input[name='densitySigmaToggle']")?.checked ??
+			true,
 	);
 
 	plot.render(canvas);
@@ -810,6 +826,8 @@ const refreshJointDensityPlot = () => {
 		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
 		`${measurementY.name} (${getUnitAbbreviationForMeasurement(measurementY.id)})`,
 		getThemePreference() === "dark",
+		document.querySelector("input[name='jointDensitySigmaToggle']")
+			?.checked ?? true,
 	);
 
 	plot.render(canvas);

@@ -16,6 +16,7 @@ class JointDensityPlot extends Plot {
 	 * @param {string} [xLabel=""] - Label for the X axis.
 	 * @param {string} [yLabel=""] - Label for the Y axis.
 	 * @param {boolean} [darkMode=false] - Whether to render in dark mode.
+	 * @param {boolean} [showSigmaLines=true] - Whether to show inner sigma lines (1σ, 2σ) and labels.
 	 */
 	constructor(
 		series,
@@ -26,6 +27,7 @@ class JointDensityPlot extends Plot {
 		xLabel = "",
 		yLabel = "",
 		darkMode = false,
+		showSigmaLines = true,
 	) {
 		super(padding, darkMode);
 
@@ -35,6 +37,7 @@ class JointDensityPlot extends Plot {
 		this.pointOfInterest = pointOfInterest;
 		this.xLabel = xLabel;
 		this.yLabel = yLabel;
+		this.showSigmaLines = showSigmaLines;
 	}
 
 	/**
@@ -173,34 +176,124 @@ class JointDensityPlot extends Plot {
 				bounds,
 			);
 
-			ctx.setLineDash([4, 4]); // dashed for others
-			ctx.lineWidth = 1;
-			this.drawConfidenceEllipse(
-				ctx,
-				mx,
-				my,
-				sx,
-				sy,
-				rho,
-				2,
-				width,
-				height,
-				bounds,
-			);
-			this.drawConfidenceEllipse(
-				ctx,
-				mx,
-				my,
-				sx,
-				sy,
-				rho,
-				1,
-				width,
-				height,
-				bounds,
-			);
+			if (this.showSigmaLines) {
+				ctx.setLineDash([4, 4]); // dashed for others
+				ctx.lineWidth = 1;
+
+				// 2-sigma
+				this.drawConfidenceEllipse(
+					ctx,
+					mx,
+					my,
+					sx,
+					sy,
+					rho,
+					2,
+					width,
+					height,
+					bounds,
+				);
+				this.drawSigmaLabel(
+					ctx,
+					mx,
+					my,
+					sx,
+					sy,
+					rho,
+					2,
+					color,
+					"2σ",
+					width,
+					height,
+					bounds,
+				);
+
+				// 1-sigma
+				this.drawConfidenceEllipse(
+					ctx,
+					mx,
+					my,
+					sx,
+					sy,
+					rho,
+					1,
+					width,
+					height,
+					bounds,
+				);
+				this.drawSigmaLabel(
+					ctx,
+					mx,
+					my,
+					sx,
+					sy,
+					rho,
+					1,
+					color,
+					"1σ",
+					width,
+					height,
+					bounds,
+				);
+			}
 		}
 
+		ctx.restore();
+	}
+
+	drawSigmaLabel(
+		ctx,
+		mx,
+		my,
+		sx,
+		sy,
+		rho,
+		scale,
+		color,
+		text,
+		width,
+		height,
+		bounds,
+	) {
+		// Calculate point at theta = 0 (max positive x direction relative to center)
+		const x = mx + sx * scale;
+		const y = my + sy * rho * scale;
+
+		// Project to screen
+		const [px, py] = this.calculatePointProjection(
+			x,
+			y,
+			width,
+			height,
+			bounds,
+		);
+
+		ctx.save();
+		ctx.font = "bold 10px sans-serif";
+		ctx.textBaseline = "middle";
+		ctx.textAlign = "center";
+		ctx.globalAlpha = 1.0;
+
+		const paddingX = 3;
+		const paddingY = 2;
+		const textMetrics = ctx.measureText(text);
+		const textWidth = textMetrics.width;
+		const textHeight = 10;
+		const rectWidth = textWidth + paddingX * 2;
+		const rectHeight = textHeight + paddingY * 2;
+
+		// Draw background rect
+		ctx.fillStyle = color;
+		ctx.fillRect(
+			px - rectWidth / 2,
+			py - rectHeight / 2,
+			rectWidth,
+			rectHeight,
+		);
+
+		// Draw text
+		ctx.fillStyle = "#FFFFFF";
+		ctx.fillText(text, px, py + 1);
 		ctx.restore();
 	}
 

@@ -198,6 +198,17 @@ title: "Anthropometry Playground"
             <button class="contrast" data-unit-for="measurementXDensity" disabled></button>
           </fieldset>
         </div>
+        <div>
+          <fieldset>
+            <label>
+              <input type="checkbox"
+                     role="switch"
+                     id="densitySigmaToggle"
+                     name="densitySigmaToggle" />
+              Show Sigma Lines
+            </label>
+          </fieldset>
+        </div>
       </div>
       {{> components/plots/density id="density-plot" }}
     </div>
@@ -249,6 +260,17 @@ title: "Anthropometry Playground"
                    name="measurementValueYJointDensity"
                    data-measurement-value />
             <button class="contrast" data-unit-for="measurementYJointDensity" disabled></button>
+          </fieldset>
+        </div>
+        <div>
+          <fieldset>
+            <label>
+              <input type="checkbox"
+                     role="switch"
+                     id="jointDensitySigmaToggle"
+                     name="jointDensitySigmaToggle" />
+              Show Sigma Lines
+            </label>
           </fieldset>
         </div>
       </div>

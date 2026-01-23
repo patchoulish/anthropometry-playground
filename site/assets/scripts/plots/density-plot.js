@@ -15,6 +15,7 @@ class DensityPlot extends Plot {
 	 * @param {Object} [padding] - Padding around the plot.
 	 * @param {string} [xLabel=""] - Label for the X axis.
 	 * @param {boolean} [darkMode=false] - Whether to render in dark mode.
+	 * @param {boolean} [showSigmaLines=true] - Whether to show sigma lines.
 	 */
 	constructor(
 		series,
@@ -25,6 +26,7 @@ class DensityPlot extends Plot {
 		padding = { top: 20, right: 20, bottom: 20, left: 20 },
 		xLabel = "",
 		darkMode = false,
+		showSigmaLines = true,
 	) {
 		super(padding, darkMode);
 
@@ -34,6 +36,7 @@ class DensityPlot extends Plot {
 		this.lineThickness = lineThickness;
 		this.lineOfInterest = lineOfInterest;
 		this.xLabel = xLabel;
+		this.showSigmaLines = showSigmaLines;
 	}
 
 	/**
@@ -49,7 +52,9 @@ class DensityPlot extends Plot {
 		ctx.save();
 		this.clipChartArea(ctx, width, height);
 
-		this.drawSigmaLines(ctx, width, height, bounds);
+		if (this.showSigmaLines) {
+			this.drawSigmaLines(ctx, width, height, bounds);
+		}
 		this.drawDensityCurves(ctx, width, height, bounds);
 		this.drawLineOfInterest(
 			ctx,
@@ -108,6 +113,7 @@ class DensityPlot extends Plot {
 		const right = width - this.padding.right;
 		const bottom = height - this.padding.bottom;
 		const drawableHeight = bottom - this.padding.top;
+		const axisColor = this.darkMode ? "#FFFFFF" : "#000000";
 
 		ctx.lineWidth = 1;
 		ctx.globalAlpha = 0.5;
@@ -136,17 +142,18 @@ class DensityPlot extends Plot {
 			const std = s.stddev("x");
 			const pdf = s.pdf("x");
 
-			const positions = [
-				mean,
-				mean - 2 * std,
-				mean - 1 * std,
-				mean + 1 * std,
-				mean + 2 * std,
+			const items = [
+				{ value: mean, label: null },
+				{ value: mean - 2 * std, label: "-2σ" },
+				{ value: mean - 1 * std, label: "-1σ" },
+				{ value: mean + 1 * std, label: "+1σ" },
+				{ value: mean + 2 * std, label: "+2σ" },
 			];
 
 			ctx.strokeStyle = color;
 
-			for (const x of positions) {
+			for (const item of items) {
+				const x = item.value;
 				if (x < bounds.minX || x > bounds.maxX) continue;
 
 				const density = pdf(x);
@@ -162,6 +169,35 @@ class DensityPlot extends Plot {
 				ctx.moveTo(px, bottom);
 				ctx.lineTo(px, py);
 				ctx.stroke();
+
+				if (item.label) {
+					ctx.save();
+					ctx.globalAlpha = 1.0;
+					ctx.font = "bold 10px sans-serif";
+					const paddingX = 3;
+					const paddingY = 2;
+					const textMetrics = ctx.measureText(item.label);
+					const textWidth = textMetrics.width;
+					const textHeight = 10; // Approximate
+					const rectWidth = textWidth + paddingX * 2;
+					const rectHeight = textHeight + paddingY * 2;
+
+					// Draw background rect
+					ctx.fillStyle = color;
+					ctx.fillRect(
+						px - rectWidth / 2,
+						bottom - rectHeight,
+						rectWidth,
+						rectHeight,
+					);
+
+					// Draw text
+					ctx.fillStyle = "#FFFFFF";
+					ctx.textAlign = "center";
+					ctx.textBaseline = "middle";
+					ctx.fillText(item.label, px, bottom - rectHeight / 2 + 1);
+					ctx.restore();
+				}
 			}
 		}
 
