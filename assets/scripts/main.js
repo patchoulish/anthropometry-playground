@@ -1,5 +1,7 @@
 import { Series } from "./math.js";
-import { HistogramPlot, DensityPlot, ScatterPlot } from "./plot.js";
+import { HistogramPlot } from "./plots/histogram-plot.js";
+import { DensityPlot } from "./plots/density-plot.js";
+import { ScatterPlot } from "./plots/scatter-plot.js";
 import { Dataset } from "./dataset.js";
 import { Gender } from "./model.js";
 
