@@ -6,6 +6,8 @@ import csvToJson from "convert-csv-to-json";
 export default async function (eleventyConfig) {
 	// Output directory: _site
 
+	eleventyConfig.setInputDirectory("site");
+
 	// Add Handlebars support.
 	eleventyConfig.addPlugin(handlebarsPlugin);
 
@@ -101,19 +103,19 @@ export default async function (eleventyConfig) {
 
 	// Passthrough copy for static assets.
 	eleventyConfig.addPassthroughCopy({
-		"assets/scripts/": "assets/scripts/",
-		"assets/data/ansur1/measurements.json":
+		"site/assets/scripts/": "assets/scripts/",
+		"site/assets/data/ansur1/measurements.json":
 			"assets/data/ansur1/measurements.json",
-		"assets/data/ansur2/measurements.json":
+		"site/assets/data/ansur2/measurements.json":
 			"assets/data/ansur2/measurements.json",
-		"robots.txt": "robots.txt",
-		"sitemap.xml": "sitemap.xml",
-		"site.webmanifest": "site.webmanifest",
-		"favicon.ico": "favicon.ico",
-		"favicon.svg": "favicon.svg",
-		"apple-touch-icon.png": "apple-touch-icon.png",
-		"android-chrome-192x192.png": "android-chrome-192x192.png",
-		"android-chrome-512x512.png": "android-chrome-512x512.png",
+		"site/robots.txt": "robots.txt",
+		"site/sitemap.xml": "sitemap.xml",
+		"site/site.webmanifest": "site.webmanifest",
+		"site/favicon.ico": "favicon.ico",
+		"site/favicon.svg": "favicon.svg",
+		"site/apple-touch-icon.png": "apple-touch-icon.png",
+		"site/android-chrome-192x192.png": "android-chrome-192x192.png",
+		"site/android-chrome-512x512.png": "android-chrome-512x512.png",
 	});
 
 	eleventyConfig.setChokidarConfig({
