@@ -160,7 +160,8 @@ class JointDensityPlot extends Plot {
 			// This is what is typically called the "standard deviation ellipse".
 
 			ctx.strokeStyle = color;
-			ctx.lineWidth = 2;
+			ctx.globalAlpha = 0.5;
+			ctx.lineWidth = 3;
 			ctx.setLineDash([]); // solid line for 1-sigma
 			this.drawConfidenceEllipse(
 				ctx,
