@@ -143,15 +143,7 @@ title: "Anthropometry Playground"
           {{> components/controls/measurement name="measurementXDensity" valueName="measurementValueXDensity" defaultValue="stature" }}
         </div>
         <div>
-          <fieldset>
-            <label>
-              <input type="checkbox"
-                     role="switch"
-                     id="densitySigmaToggle"
-                     name="densitySigmaToggle" />
-              Show Sigma Lines
-            </label>
-          </fieldset>
+          {{> components/controls/switch id="densitySigmaToggle" name="densitySigmaToggle" label="Show Sigma Lines" checked=false }}
         </div>
       </div>
       {{> components/plots/density id="density-plot" }}
@@ -175,15 +167,7 @@ title: "Anthropometry Playground"
           {{> components/controls/measurement name="measurementYJointDensity" valueName="measurementValueYJointDensity" defaultValue="weight" }}
         </div>
         <div>
-          <fieldset>
-            <label>
-              <input type="checkbox"
-                     role="switch"
-                     id="jointDensitySigmaToggle"
-                     name="jointDensitySigmaToggle" />
-              Show Sigma Lines
-            </label>
-          </fieldset>
+          {{> components/controls/switch id="jointDensitySigmaToggle" name="jointDensitySigmaToggle" label="Show Sigma Lines" checked=false }}
         </div>
       </div>
       {{> components/plots/joint-density id="joint-density-plot" }}

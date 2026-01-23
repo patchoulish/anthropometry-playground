@@ -7,8 +7,10 @@ import { Dataset } from "./dataset.js";
 import { Gender } from "./model.js";
 import { Preferences } from "./preferences.js";
 import { MeasurementComponent } from "./components/controls/measurement.js";
+import { SwitchComponent } from "./components/controls/switch.js";
 
 let measurementComponents = [];
+let switchComponents = [];
 
 const getDataset = async () => {
 	const datasetId = preferences.dataset;
@@ -86,6 +88,13 @@ const initialize = async () => {
 		(element) => new MeasurementComponent(element),
 	);
 
+	const switchControlElements = document.querySelectorAll(
+		"fieldset[data-switch-control]",
+	);
+	switchComponents = Array.from(switchControlElements).map(
+		(element) => new SwitchComponent(element),
+	);
+
 	document.addEventListener("measurement-change", (event) => {
 		const { measurementId, name } = event.detail;
 
@@ -146,19 +155,26 @@ const initialize = async () => {
 		refreshJointDensityPlot();
 	});
 
-	const densitySigmaToggleElement = document.querySelector(
-		"input[name='densitySigmaToggle']",
+	const densitySigmaToggleComponent = switchComponents.find(
+		(c) => c.name === "densitySigmaToggle",
 	);
-	densitySigmaToggleElement.addEventListener("change", () => {
-		refreshDensityPlot();
-	});
+	if (densitySigmaToggleComponent) {
+		densitySigmaToggleComponent.element.addEventListener("change", () => {
+			refreshDensityPlot();
+		});
+	}
 
-	const jointDensitySigmaToggleElement = document.querySelector(
-		"input[name='jointDensitySigmaToggle']",
+	const jointDensitySigmaToggleComponent = switchComponents.find(
+		(c) => c.name === "jointDensitySigmaToggle",
 	);
-	jointDensitySigmaToggleElement.addEventListener("change", () => {
-		refreshJointDensityPlot();
-	});
+	if (jointDensitySigmaToggleComponent) {
+		jointDensitySigmaToggleComponent.element.addEventListener(
+			"change",
+			() => {
+				refreshJointDensityPlot();
+			},
+		);
+	}
 
 	refreshResults();
 };
@@ -493,8 +509,8 @@ const refreshDensityPlot = () => {
 		{ top: 20, right: 20, bottom: 40, left: 50 },
 		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
 		getThemePreference() === "dark",
-		document.querySelector("input[name='densitySigmaToggle']")?.checked ??
-			true,
+		switchComponents.find((c) => c.name === "densitySigmaToggle")
+			?.checked ?? true,
 	);
 
 	plot.render(canvas);
@@ -557,7 +573,7 @@ const refreshJointDensityPlot = () => {
 		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
 		`${measurementY.name} (${getUnitAbbreviationForMeasurement(measurementY.id)})`,
 		getThemePreference() === "dark",
-		document.querySelector("input[name='jointDensitySigmaToggle']")
+		switchComponents.find((c) => c.name === "jointDensitySigmaToggle")
 			?.checked ?? true,
 	);
 
