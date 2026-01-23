@@ -95,3 +95,36 @@ canvas.plot {
 		grid-template-columns: 1fr;
 	}
 }
+
+article {
+	padding-top: 0rem;
+}
+
+.sticky-settings {
+	position: sticky;
+	top: 0rem;
+	z-index: 99;
+	background-color: var(--pico-card-background-color);
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	margin-left: calc(var(--pico-block-spacing-horizontal) * -1);
+	margin-right: calc(var(--pico-block-spacing-horizontal) * -1);
+	padding-left: 0rem;
+	padding-right: 0rem;
+	padding-top: 1rem;
+}
+
+.sticky-settings > .grid {
+	padding-left: var(--pico-block-spacing-horizontal);
+	padding-right: var(--pico-block-spacing-horizontal);
+}
+
+.sticky-settings > hr {
+	margin-left: 0rem;
+	margin-right: 0rem;
+}
+
+hr {
+	margin-left: -1rem;
+	margin-right: -1rem;
+}
