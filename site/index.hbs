@@ -100,13 +100,7 @@ title: "Anthropometry Playground"
         </p>
         <div>
           <label>X-Axis:</label>
-          {{> components/controls/measurement-dropdown name="measurementXHistogram" defaultValue="stature" }}
-          <fieldset role="group">
-            <input type="number"
-                   name="measurementValueXHistogram"
-                   data-measurement-value />
-            <button class="contrast" data-unit-for="measurementXHistogram" disabled></button>
-          </fieldset>
+          {{> components/controls/measurement name="measurementXHistogram" valueName="measurementValueXHistogram" defaultValue="stature" }}
         </div>
       </div>
       {{> components/plots/histogram id="histogram-plot" }}
@@ -124,19 +118,11 @@ title: "Anthropometry Playground"
         </p>
         <div>
           <label>X-Axis:</label>
-          {{> components/controls/measurement-dropdown name="measurementXScatter" defaultValue="stature" }}
-          <fieldset role="group">
-            <input type="number" name="measurementValueXScatter" data-measurement-value />
-            <button class="contrast" data-unit-for="measurementXScatter" disabled></button>
-          </fieldset>
+          {{> components/controls/measurement name="measurementXScatter" valueName="measurementValueXScatter" defaultValue="stature" }}
         </div>
         <div>
           <label>Y-Axis:</label>
-          {{> components/controls/measurement-dropdown name="measurementYScatter" defaultValue="weight" }}
-          <fieldset role="group">
-            <input type="number" name="measurementValueYScatter" data-measurement-value />
-            <button class="contrast" data-unit-for="measurementYScatter" disabled></button>
-          </fieldset>
+          {{> components/controls/measurement name="measurementYScatter" valueName="measurementValueYScatter" defaultValue="weight" }}
         </div>
       </div>
       {{> components/plots/scatter id="scatter-plot" }}
@@ -154,11 +140,7 @@ title: "Anthropometry Playground"
         </p>
         <div>
           <label>X-Axis:</label>
-          {{> components/controls/measurement-dropdown name="measurementXDensity" defaultValue="stature" }}
-          <fieldset role="group">
-            <input type="number" name="measurementValueXDensity" data-measurement-value />
-            <button class="contrast" data-unit-for="measurementXDensity" disabled></button>
-          </fieldset>
+          {{> components/controls/measurement name="measurementXDensity" valueName="measurementValueXDensity" defaultValue="stature" }}
         </div>
         <div>
           <fieldset>
@@ -186,23 +168,11 @@ title: "Anthropometry Playground"
         </p>
         <div>
           <label>X-Axis:</label>
-          {{> components/controls/measurement-dropdown name="measurementXJointDensity" defaultValue="stature" }}
-          <fieldset role="group">
-            <input type="number"
-                   name="measurementValueXJointDensity"
-                   data-measurement-value />
-            <button class="contrast" data-unit-for="measurementXJointDensity" disabled></button>
-          </fieldset>
+          {{> components/controls/measurement name="measurementXJointDensity" valueName="measurementValueXJointDensity" defaultValue="stature" }}
         </div>
         <div>
           <label>Y-Axis:</label>
-          {{> components/controls/measurement-dropdown name="measurementYJointDensity" defaultValue="weight" }}
-          <fieldset role="group">
-            <input type="number"
-                   name="measurementValueYJointDensity"
-                   data-measurement-value />
-            <button class="contrast" data-unit-for="measurementYJointDensity" disabled></button>
-          </fieldset>
+          {{> components/controls/measurement name="measurementYJointDensity" valueName="measurementValueYJointDensity" defaultValue="weight" }}
         </div>
         <div>
           <fieldset>

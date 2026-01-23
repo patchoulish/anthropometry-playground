@@ -6,9 +6,9 @@ import { JointDensityPlot } from "./plots/joint-density-plot.js";
 import { Dataset } from "./dataset.js";
 import { Gender } from "./model.js";
 import { Preferences } from "./preferences.js";
-import { MeasurementDropdownComponent } from "./components/controls/measurement-dropdown.js";
+import { MeasurementComponent } from "./components/controls/measurement.js";
 
-let measurementDropdownComponents = [];
+let measurementComponents = [];
 
 const getDataset = async () => {
 	const datasetId = preferences.dataset;
@@ -79,30 +79,29 @@ const initialize = async () => {
 		});
 	});
 
-	const measurementDropdownElements = document.querySelectorAll(
-		"details[data-measurement-dropdown]",
+	const measurementControlElements = document.querySelectorAll(
+		"div[data-measurement-control]",
 	);
-	measurementDropdownComponents = Array.from(measurementDropdownElements).map(
-		(element) => new MeasurementDropdownComponent(element),
+	measurementComponents = Array.from(measurementControlElements).map(
+		(element) => new MeasurementComponent(element),
 	);
 
 	document.addEventListener("measurement-change", (event) => {
 		const { measurementId, name } = event.detail;
 
 		// Update units
-		const measurementUnitElements = document.querySelectorAll(
-			`button[data-unit-for="${name}"]`,
-		);
-		measurementUnitElements.forEach((element) => {
-			element.textContent =
+		const component = measurementComponents.find((c) => c.name === name);
+		if (component) {
+			const unitAbbreviation =
 				getUnitAbbreviationForMeasurement(measurementId);
-		});
+			component.updateUnitLabel(unitAbbreviation);
+		}
 
 		refreshResults();
 	});
 
 	// Initial population
-	measurementDropdownComponents.forEach((component) =>
+	measurementComponents.forEach((component) =>
 		component.update(dataset.value),
 	);
 
@@ -169,20 +168,8 @@ const handleDatasetChange = async () => {
 	dataset.value = await getDataset();
 
 	// Reload all measurement dropdowns
-	measurementDropdownComponents.forEach((component) => {
-		const changed = component.update(dataset.value);
-		if (changed) {
-			const inputName = component.name.replace(
-				"measurement",
-				"measurementValue",
-			);
-			const measurementInputElement = document.querySelector(
-				`input[data-measurement-value][name="${inputName}"]`,
-			);
-			if (measurementInputElement) {
-				measurementInputElement.value = "";
-			}
-		}
+	measurementComponents.forEach((component) => {
+		component.update(dataset.value);
 	});
 
 	// Refresh all plots with the new data
@@ -190,94 +177,46 @@ const handleDatasetChange = async () => {
 };
 
 const handleUnitPreferenceChange = (target, oldUnit) => {
-	document
-		.querySelectorAll("button[data-unit-for]")
-		.forEach((measurementUnitElement) => {
-			const measurementDropdownElement = document.querySelector(
-				`details[data-measurement-dropdown][name="${measurementUnitElement.getAttribute("data-unit-for")}"]`,
-			);
+	measurementComponents.forEach((component) => {
+		const measurementId = component.measurementId;
 
-			if (!measurementDropdownElement) {
-				return;
-			}
+		// Update label
+		const unitAbbreviation =
+			getUnitAbbreviationForMeasurement(measurementId);
+		component.updateUnitLabel(unitAbbreviation);
 
-			const measurementDropdownCheckedOptionElement =
-				measurementDropdownElement.querySelector(
-					"input[type=radio]:checked",
-				);
+		// Update value if needed
+		const measurement = dataset.value
+			.measurements()
+			.find((m) => m.id === measurementId);
 
-			if (measurementDropdownCheckedOptionElement) {
-				measurementUnitElement.textContent =
-					getUnitAbbreviationForMeasurement(
-						measurementDropdownCheckedOptionElement.value,
-					);
+		if (
+			measurement &&
+			component.inputValue &&
+			!isNaN(component.inputValue) &&
+			oldUnit
+		) {
+			const oldUnitSystem = measurement.unit.forSystem[oldUnit];
+			const newUnitSystem = measurement.unit.forSystem[preferences.unit];
 
-				// Convert the user input value from old unit to new unit
-				const dropdownName =
-					measurementUnitElement.getAttribute("data-unit-for");
-				const inputName = dropdownName.replace(
-					"measurement",
-					"measurementValue",
-				);
-				const measurementInputElement = document.querySelector(
-					`input[data-measurement-value][name="${inputName}"]`,
-				);
+			if (oldUnitSystem && newUnitSystem) {
+				const oldConversionFactor = oldUnitSystem.conversionFactor;
+				const newConversionFactor = newUnitSystem.conversionFactor;
 
 				if (
-					measurementInputElement &&
-					measurementInputElement.value &&
-					oldUnit &&
-					inputName !== dropdownName // Ensure replacement occurred
+					oldConversionFactor &&
+					oldConversionFactor !== 0 &&
+					newConversionFactor &&
+					newConversionFactor !== 0
 				) {
-					const measurementId =
-						measurementDropdownCheckedOptionElement.value;
-					const measurement = dataset.value
-						.measurements()
-						.find((m) => m.id === measurementId);
-
-					if (measurement) {
-						const currentValue = parseFloat(
-							measurementInputElement.value,
-						);
-
-						// Validate that the current value is a valid number
-						if (isNaN(currentValue)) {
-							return;
-						}
-
-						const oldUnitSystem =
-							measurement.unit.forSystem[oldUnit];
-						const newUnitSystem =
-							measurement.unit.forSystem[preferences.unit];
-
-						// Validate that both unit systems exist
-						if (!oldUnitSystem || !newUnitSystem) {
-							return;
-						}
-
-						const oldConversionFactor =
-							oldUnitSystem.conversionFactor;
-						const newConversionFactor =
-							newUnitSystem.conversionFactor;
-
-						// Validate conversion factors to prevent division by zero
-						if (
-							!oldConversionFactor ||
-							oldConversionFactor === 0 ||
-							!newConversionFactor ||
-							newConversionFactor === 0
-						) {
-							return;
-						}
-
-						const newValue =
-							currentValue *
-							(newConversionFactor / oldConversionFactor);
-						measurementInputElement.value = newValue.toFixed(2);
-					}
+					const newValue =
+						component.inputValue *
+						(newConversionFactor / oldConversionFactor);
+					component.inputValue = newValue.toFixed(2);
 				}
 			}
-		});
+		}
+	});
 };
 
 const getUnitAbbreviationForMeasurement = (measurementId) => {

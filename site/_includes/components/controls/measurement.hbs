@@ -1,0 +1,7 @@
+<div data-measurement-control name="{{ name }}">
+  {{> components/controls/measurement-dropdown name=name defaultValue=defaultValue }}
+  <fieldset role="group">
+    <input type="number" name="{{ valueName }}" data-measurement-value />
+    <button class="contrast" data-unit-for="{{ name }}" disabled></button>
+  </fieldset>
+</div>
