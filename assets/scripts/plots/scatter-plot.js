@@ -48,8 +48,15 @@ class ScatterPlot extends Plot {
 	handleRender(ctx, width, height) {
 		const bounds = this.calculateBounds();
 
-		this.drawAxes(ctx, width, height, bounds);
+		// Clip and draw chart elements
+		ctx.save();
+		this.clipChartArea(ctx, width, height);
+
 		this.drawPoints(ctx, width, height, bounds);
+		ctx.restore();
+
+		// Draw axes and labels on top, outside the clip region
+		this.drawAxes(ctx, width, height, bounds);
 	}
 
 	/**

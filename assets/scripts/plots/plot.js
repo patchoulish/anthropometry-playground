@@ -70,6 +70,23 @@ class Plot {
 	}
 
 	/**
+	 * Clips the drawing region to the plot area (excluding padding).
+	 * @param {CanvasRenderingContext2D} ctx - The drawing context.
+	 * @param {number} width - The logical width of the canvas.
+	 * @param {number} height - The logical height of the canvas.
+	 */
+	clipChartArea(ctx, width, height) {
+		const left = this.padding.left;
+		const bottom = height - this.padding.bottom;
+
+		// Clip w.r.t. the left and bottom axes, but allow drawing to extend
+		// to the top and right edges of the canvas to avoid cutting off markers.
+		ctx.beginPath();
+		ctx.rect(left, 0, width - left, bottom);
+		ctx.clip();
+	}
+
+	/**
 	 * Draws the X-axis line.
 	 * @param {CanvasRenderingContext2D} ctx - The drawing context.
 	 * @param {number} left - The left coordinate.
