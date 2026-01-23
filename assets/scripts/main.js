@@ -2,6 +2,7 @@ import { Series } from "./math.js";
 import { HistogramPlot } from "./plots/histogram-plot.js";
 import { DensityPlot } from "./plots/density-plot.js";
 import { ScatterPlot } from "./plots/scatter-plot.js";
+import { JointDensityPlot } from "./plots/joint-density-plot.js";
 import { Dataset } from "./dataset.js";
 import { Gender } from "./model.js";
 
@@ -136,6 +137,19 @@ const initialize = async () => {
 	);
 	measurementValueXDElement.addEventListener("input", () => {
 		refreshDensityPlot();
+	});
+
+	const measurementValueXJointDensityElement = document.querySelector(
+		"input[name='measurementValueXJointDensity']",
+	);
+	measurementValueXJointDensityElement.addEventListener("input", () => {
+		refreshJointDensityPlot();
+	});
+	const measurementValueYJointDensityElement = document.querySelector(
+		"input[name='measurementValueYJointDensity']",
+	);
+	measurementValueYJointDensityElement.addEventListener("input", () => {
+		refreshJointDensityPlot();
 	});
 
 	refreshResults();
@@ -769,10 +783,73 @@ const refreshDensityPlot = () => {
 	plot.render(canvas);
 };
 
+const refreshJointDensityPlot = () => {
+	const measurementX = dataset.value
+		.measurements()
+		.find(
+			(m) =>
+				m.id ===
+				(document.querySelector(
+					"details[data-measurement-dropdown][name='measurementXJointDensity'] input[type=radio]:checked",
+				)?.value ?? "stature"),
+		);
+	const measurementY = dataset.value
+		.measurements()
+		.find(
+			(m) =>
+				m.id ===
+				(document.querySelector(
+					"details[data-measurement-dropdown][name='measurementYJointDensity'] input[type=radio]:checked",
+				)?.value ?? "weightkg"),
+		);
+
+	// If measurements don't exist, skip rendering
+	if (!measurementX || !measurementY) {
+		return;
+	}
+
+	const canvas = document.getElementById("joint-density-plot");
+	resizeCanvasToContainer(canvas);
+
+	const series = buildJointSeries(measurementX, measurementY);
+	const plot = new JointDensityPlot(
+		series.series,
+		series.seriesColors,
+		series.seriesLabels,
+		{
+			x: document.querySelector(
+				"input[name='measurementValueXJointDensity']",
+			).value
+				? parseFloat(
+						document.querySelector(
+							"input[name='measurementValueXJointDensity']",
+						).value,
+					)
+				: undefined,
+			y: document.querySelector(
+				"input[name='measurementValueYJointDensity']",
+			).value
+				? parseFloat(
+						document.querySelector(
+							"input[name='measurementValueYJointDensity']",
+						).value,
+					)
+				: undefined,
+		},
+		{ top: 20, right: 20, bottom: 40, left: 50 },
+		`${measurementX.name} (${getUnitAbbreviationForMeasurement(measurementX.id)})`,
+		`${measurementY.name} (${getUnitAbbreviationForMeasurement(measurementY.id)})`,
+		getThemePreference() === "dark",
+	);
+
+	plot.render(canvas);
+};
+
 const refreshResults = () => {
 	refreshHistogramPlot();
 	refreshScatterPlot();
 	refreshDensityPlot();
+	refreshJointDensityPlot();
 };
 
 const preferences = {

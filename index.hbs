@@ -202,4 +202,57 @@ title: "Anthropometry Playground"
       {{> components/plots/density id="density-plot" }}
     </div>
   </details>
+  <hr />
+  <details name="visualizations4" open>
+    <summary class="contrast">004. Modelled Joint Probability Distribution</summary>
+    <div class="grid visualization-grid">
+      <div>
+        <p>
+          View the modelled joint probability density for two anthropometric variables.
+          Select the variables to visualize. Enter a value for each to see where that point falls within the dataset.
+        </p>
+        <div>
+          <label>X-Axis:</label>
+          <details class="dropdown"
+                   name="measurementXJointDensity"
+                   data-measurement-dropdown
+                   data-measurement-dropdown-default="stature">
+            <summary>Measurement</summary>
+            <ul>
+              <li>
+                <input type="search" placeholder="Search" aria-label="Search" />
+              </li>
+            </ul>
+          </details>
+          <fieldset role="group">
+            <input type="number"
+                   name="measurementValueXJointDensity"
+                   data-measurement-value />
+            <button class="contrast" data-unit-for="measurementXJointDensity" disabled></button>
+          </fieldset>
+        </div>
+        <div>
+          <label>Y-Axis:</label>
+          <details class="dropdown"
+                   name="measurementYJointDensity"
+                   data-measurement-dropdown
+                   data-measurement-dropdown-default="weight">
+            <summary>Measurement</summary>
+            <ul>
+              <li>
+                <input type="search" placeholder="Search" aria-label="Search" />
+              </li>
+            </ul>
+          </details>
+          <fieldset role="group">
+            <input type="number"
+                   name="measurementValueYJointDensity"
+                   data-measurement-value />
+            <button class="contrast" data-unit-for="measurementYJointDensity" disabled></button>
+          </fieldset>
+        </div>
+      </div>
+      {{> components/plots/joint-density id="joint-density-plot" }}
+    </div>
+  </details>
 </article>
