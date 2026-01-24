@@ -1,0 +1,18 @@
+<div class="grid visualization-grid">
+  <div>
+    <p>
+      View the joint distribution between two anthropometric
+      variables. Select the variables to visualize. Enter a value
+      for each to see where that point falls within the dataset.
+    </p>
+    <div>
+      <label>X-Axis:</label>
+      {{> components/controls/measurement name="measurementXScatter" valueName="measurementValueXScatter" defaultValue="stature" }}
+    </div>
+    <div>
+      <label>Y-Axis:</label>
+      {{> components/controls/measurement name="measurementYScatter" valueName="measurementValueYScatter" defaultValue="weight" }}
+    </div>
+  </div>
+  {{> components/plots/scatter id="scatter-plot" }}
+</div>

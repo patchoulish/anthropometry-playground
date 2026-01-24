@@ -1,0 +1,10 @@
+{{#each experiments}}
+  {{> components/experiments/experiment
+  name=this.name
+  title=this.title
+  content=this.content
+  }}
+  {{#unless @last}}
+  <hr />
+{{/unless}}
+{{/each}}

@@ -1,0 +1,20 @@
+<div class="grid visualization-grid">
+  <div>
+    <p>
+      View the modelled joint probability density for two anthropometric variables.
+      Select the variables to visualize. Enter a value for each to see where that point falls within the dataset.
+    </p>
+    <div>
+      <label>X-Axis:</label>
+      {{> components/controls/measurement name="measurementXJointDensity" valueName="measurementValueXJointDensity" defaultValue="stature" }}
+    </div>
+    <div>
+      <label>Y-Axis:</label>
+      {{> components/controls/measurement name="measurementYJointDensity" valueName="measurementValueYJointDensity" defaultValue="weight" }}
+    </div>
+    <div>
+      {{> components/controls/switch id="jointDensitySigmaToggle" name="jointDensitySigmaToggle" label="Show Sigma Lines" checked=false }}
+    </div>
+  </div>
+  {{> components/plots/joint-density id="joint-density-plot" }}
+</div>

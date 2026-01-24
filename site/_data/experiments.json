@@ -1,0 +1,22 @@
+[
+	{
+		"name": "histogram",
+		"title": "001. Actual Distribution",
+		"content": "components/experiments/histogram/content"
+	},
+	{
+		"name": "scatter",
+		"title": "002. Actual Joint Distribution",
+		"content": "components/experiments/scatter/content"
+	},
+	{
+		"name": "density",
+		"title": "003. Modelled Probability Distribution",
+		"content": "components/experiments/density/content"
+	},
+	{
+		"name": "joint-density",
+		"title": "004. Modelled Joint Probability Distribution",
+		"content": "components/experiments/joint-density/content"
+	}
+]

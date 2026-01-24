@@ -1,0 +1,14 @@
+<div class="grid visualization-grid">
+  <div>
+    <p>
+      View the distribution of a single anthropometric variable.
+      Select the variable to visualize. Enter a value to see where
+      it falls within the dataset.
+    </p>
+    <div>
+      <label>X-Axis:</label>
+      {{> components/controls/measurement name="measurementXHistogram" valueName="measurementValueXHistogram" defaultValue="stature" }}
+    </div>
+  </div>
+  {{> components/plots/histogram id="histogram-plot" }}
+</div>

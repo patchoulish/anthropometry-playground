@@ -1,0 +1,17 @@
+<div class="grid visualization-grid">
+  <div>
+    <p>
+      View the modelled probability distribution for a single anthropometric variable.
+      Select the variable to visualize. Enter a value to see where
+      it falls within the dataset.
+    </p>
+    <div>
+      <label>X-Axis:</label>
+      {{> components/controls/measurement name="measurementXDensity" valueName="measurementValueXDensity" defaultValue="stature" }}
+    </div>
+    <div>
+      {{> components/controls/switch id="densitySigmaToggle" name="densitySigmaToggle" label="Show Sigma Lines" checked=false }}
+    </div>
+  </div>
+  {{> components/plots/density id="density-plot" }}
+</div>
