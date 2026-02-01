@@ -2,6 +2,33 @@ import { Series } from "./math.js";
 import { Gender } from "./model.js";
 
 /**
+ * Evidence categories based on Lee & Wagenmakers (2013) interpretation of Bayes factors.
+ * @typedef {'extreme' | 'veryStrong' | 'strong' | 'moderate' | 'anecdotal'} EvidenceCategory
+ */
+
+/**
+ * Gets the evidence category for a Bayes factor using Lee & Wagenmakers (2013) scale.
+ * @param {number} bf - The Bayes factor (can be < 1 or > 1).
+ * @returns {{ category: EvidenceCategory, label: string, favors: 'first' | 'second' | 'neither' }}
+ */
+export const getEvidenceCategory = (bf) => {
+	const absBf = bf >= 1 ? bf : 1 / bf;
+	const favors = bf >= 1 ? "first" : "second";
+
+	if (absBf >= 100) {
+		return { category: "extreme", label: "Extreme", favors };
+	} else if (absBf >= 30) {
+		return { category: "veryStrong", label: "Very Strong", favors };
+	} else if (absBf >= 10) {
+		return { category: "strong", label: "Strong", favors };
+	} else if (absBf >= 3) {
+		return { category: "moderate", label: "Moderate", favors };
+	} else {
+		return { category: "anecdotal", label: "Anecdotal", favors };
+	}
+};
+
+/**
  * Converts measurement values to the display unit based on preferences.
  * @param {number[]} values - The values to convert.
  * @param {string} measurementId - The ID of the measurement.

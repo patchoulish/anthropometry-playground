@@ -1,0 +1,78 @@
+<div class="classification-experiment" data-classification-experiment>
+  <p>Enter one or more anthropometric measurements for an individual below to classify their gender.</p>
+  <div class="classification-grid">
+    <div>
+      <h4>Classification Method</h4>
+      <details class="dropdown"
+               data-classifier-dropdown
+               data-tooltip="Choose the classification method to use.">
+        <summary data-classifier-summary>Linear Discriminant Analysis</summary>
+        <ul>
+          <li>
+            <label>
+              <input type="radio" name="classifier" value="lda" checked />
+              <span>
+                Linear Discriminant Analysis
+                <small class="badge">(recommended)</small>
+                <br />
+                <small>Accounts for correlations between measurements.</small>
+              </span>
+            </label>
+          </li>
+          <hr />
+          <li>
+            <label>
+              <input type="radio" name="classifier" value="naive-bayes" />
+              <span>
+                Naive Bayes
+                <br />
+                <small>Assumes measurements are independent.</small>
+              </span>
+            </label>
+          </li>
+        </ul>
+      </details>
+      <h4>Measurements</h4>
+      <div class="classification-cards" data-classification-rows>
+        <!-- Cards are dynamically added here -->
+      </div>
+      <div class="classification-add-button">
+        <button class="contrast" data-add-measurement-row>Add Measurement</button>
+      </div>
+    </div>
+    <div data-classification-result>
+      <h4>Classification Result</h4>
+      <p data-result-text>Add at least one measurement to see the classification result.</p>
+      <div data-result-summary style="display: none;">
+        <p>
+          <strong>Classification:</strong>
+          <span data-result-winner></span>
+          <span data-result-evidence></span>
+        </p>
+        <p>
+          <strong>Bayes Factor:</strong>
+          <span data-result-bayes-factor></span>
+          <small data-result-bayes-factor-note></small>
+        </p>
+      </div>
+      <div data-result-work style="display: none;">
+        <h5>Evidence Breakdown</h5>
+        <div data-result-work-content>
+          <!-- Per-measurement evidence dynamically added here -->
+        </div>
+      </div>
+      <div data-result-details style="display: none;">
+        <table role="grid">
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>Posterior Probability</th>
+            </tr>
+          </thead>
+          <tbody data-result-probabilities>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

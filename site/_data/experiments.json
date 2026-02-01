@@ -18,5 +18,10 @@
 		"name": "joint-density",
 		"title": "004. Modelled Joint Probability Distribution",
 		"content": "components/experiments/joint-density/content"
+	},
+	{
+		"name": "classification",
+		"title": "005. Multivariate Gender Classification",
+		"content": "components/experiments/classification/content"
 	}
 ]

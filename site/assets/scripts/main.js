@@ -14,6 +14,7 @@ import { HistogramPlotComponent } from "./components/plots/histogram-plot-compon
 import { DensityPlotComponent } from "./components/plots/density-plot-component.js";
 import { ScatterPlotComponent } from "./components/plots/scatter-plot-component.js";
 import { JointDensityPlotComponent } from "./components/plots/joint-density-plot-component.js";
+import { ClassificationComponent } from "./components/experiments/classification-component.js";
 
 /** @type {MeasurementComponent[]} List of measurement control components */
 let measurementComponents = [];
@@ -21,6 +22,8 @@ let measurementComponents = [];
 let switchComponents = [];
 /** @type {import("./components/plots/plot-component.js").PlotComponent[]} */
 let plotComponents = [];
+/** @type {ClassificationComponent|null} */
+let classificationComponent = null;
 
 const preferences = new Preferences();
 
@@ -205,6 +208,17 @@ const initialize = async () => {
 			},
 		),
 	];
+
+	// Initialize Classification Component
+	const classificationElement = document.querySelector(
+		"[data-classification-experiment]",
+	);
+	if (classificationElement) {
+		classificationComponent = new ClassificationComponent(
+			classificationElement,
+		);
+		classificationComponent.update(dataset.value, preferences.unit);
+	}
 
 	document.addEventListener("measurement-change", () => {
 		refreshResults();

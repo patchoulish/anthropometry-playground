@@ -1,4 +1,5 @@
 @use "@picocss/pico/scss/pico";
+@use "@picocss/pico/scss/pico.colors" as *;
 
 * {
 	font-family: "SF Mono", ui-monospace, monospace;
@@ -132,4 +133,161 @@ hr {
 // Last detail in article, when collapsed, should not have a bottom margin.
 article > details:last-of-type:not([open]) {
 	margin-bottom: 0rem;
+}
+
+// Classification experiment styles
+.classification-experiment {
+	// Classifier selector
+	.classification-settings {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: 1.5rem;
+
+		label {
+			margin-bottom: 0;
+			font-weight: 600;
+		}
+
+		details.dropdown {
+			margin-bottom: 0;
+		}
+	}
+
+	// Main 2-column grid (measurements | results)
+	.classification-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--pico-grid-column-gap);
+	}
+
+	// Card container - single column stack
+	.classification-cards {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	// Individual card
+	.classification-card {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		gap: 1rem;
+		padding: 1rem;
+		border: 1px solid var(--pico-muted-border-color);
+		border-radius: var(--pico-border-radius);
+	}
+
+	// Card content (dropdown, input stacked)
+	.classification-card-content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+
+		// Dropdown styling
+		details[data-measurement-dropdown] {
+			> summary {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+
+		// Input group should not wrap
+		fieldset[role="group"] {
+			margin-bottom: 0;
+			flex-wrap: nowrap;
+		}
+	}
+
+	// Remove button container - fixed width
+	.classification-card-remove {
+		flex-shrink: 0;
+		display: flex;
+		align-items: flex-start;
+
+		button {
+			width: 2.5rem;
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+
+	// Add button container - right aligned
+	.classification-add-button {
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 1rem;
+	}
+
+	// Evidence breakdown in results
+	.classification-work-item {
+		margin-bottom: 1rem;
+		padding: 0.75rem;
+		border: 1px solid var(--pico-muted-border-color);
+		border-radius: var(--pico-border-radius);
+		font-size: 0.875rem;
+
+		.evidence-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 0.5rem;
+		}
+
+		.measurement-name {
+			font-weight: 600;
+		}
+
+		.evidence-label {
+			font-weight: 500;
+		}
+
+		.evidence-details {
+			color: var(--pico-muted-color);
+			font-size: 0.8125rem;
+		}
+
+		.evidence-row {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-bottom: 0.25rem;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		.evidence-metric {
+			min-width: 7rem;
+		}
+
+		.evidence-separator {
+			color: var(--pico-muted-color);
+			opacity: 0.5;
+		}
+
+		// Mahalanobis distance section gets special styling
+		&.mahalanobis-section {
+			background-color: var(--pico-card-background-color);
+			border-width: 2px;
+
+			.measurement-name {
+				border-bottom: none;
+				cursor: default;
+			}
+		}
+	}
+}
+
+// Responsive: single column on small screens
+@media (max-width: 768px) {
+	.classification-experiment {
+		.classification-grid {
+			grid-template-columns: 1fr;
+		}
+	}
 }
