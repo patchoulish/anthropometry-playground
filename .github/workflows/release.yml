@@ -33,7 +33,7 @@ jobs:
       - name: Build site
         run: nix-shell --run 'just build'
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: build-artifacts
