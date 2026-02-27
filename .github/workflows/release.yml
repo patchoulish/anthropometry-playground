@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
       - name: Compress release assets
         run: zip -r ${{ github.workspace }}/../site.zip ./*
       - name: Checkout repository
@@ -67,7 +67,7 @@ jobs:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
       - name: Download build artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: build-artifacts
       - name: Upload build artifacts to GitHub Pages
