@@ -65,7 +65,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
       - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
