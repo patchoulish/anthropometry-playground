@@ -23,7 +23,7 @@
 		"@11ty/eleventy": "^3.1.2",
 		"@11ty/eleventy-plugin-handlebars": "^1.0.0",
 		"@picocss/pico": "^2.1.1",
-		"convert-csv-to-json": "^3.20.0",
+		"convert-csv-to-json": "^4.29.0",
 		"sass": "^1.97.3"
 	}
 }
