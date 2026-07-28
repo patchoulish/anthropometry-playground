@@ -17,7 +17,7 @@ jobs:
       DAYS_BEFORE_CLOSE: 7
     steps:
       - name: Check for stale issues and PRs
-        uses: actions/stale@v10
+        uses: actions/stale@v11
         with:
           days-before-stale: ${{ env.DAYS_BEFORE_STALE }}
           days-before-close: ${{ env.DAYS_BEFORE_CLOSE }}
